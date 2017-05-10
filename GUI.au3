@@ -12,16 +12,14 @@
 
 
 Func GUIMain()
+
 	  ;---- Menu ----;
 Global $menu1 = GUICtrlCreateMenu("File")
+Global $menu1button1 = GUICtrlCreateMenuItem("Save to standard", $menu1)
+Global $menu1button2 = GUICtrlCreateMenuItem("Set default to standard", $menu1)
 Global $menu2 = GUICtrlCreateMenu("Help")
 
 GUICtrlCreateGroup("", 10, 10, 780, 560)
-
-For $i = 0 To 2
-    GUICtrlCreateTabItem("Tab " & $i)
-   $tabButton[$i] = GUICtrlCreateButton("GUI " & $i, 10 + ($i * 80), 0, 80)
-Next
 
 EndFunc
 
@@ -32,11 +30,13 @@ Local $boxTabCount = 0
 ;---- Set Window ----;
 Global $gui0 = GUICreate("Klart För Start - Program Install", $pwWidth, $pwHeight)
 GUISetBkColor(0xf8f8ff)
-GUISetState(@SW_SHOW, $gui0)
 ;--------;
 
 ;----Create Tab & Menu----;
 GUIMain()
+$tabButton[0] = GUICtrlCreateButton("Program", 10, 0, 80)
+$tabButton[1] = GUICtrlCreateButton("GUI", 90, 0, 80)
+$tabButton[2] = GUICtrlCreateButton("GUI", 170, 0, 80)
 ;--------;
 
 
@@ -73,11 +73,14 @@ Func GUI1()
 ;---- Set Window ----;
 Global $gui1 = GUICreate("Klart För Start -", $pwWidth, $pwHeight)
 GUISetBkColor(0xf8f8ff)
-GUISetState(@SW_SHOW, $gui1)
 ;--------;
 
 ;----Create Tab & Menu----;
 GUIMain()
+$tabButton[3] = GUICtrlCreateButton("Program", 10, 0, 80)
+$tabButton[4] = GUICtrlCreateButton("GUI ", 90, 0, 80)
+$tabButton[5] = GUICtrlCreateButton("GUI ", 170, 0, 80)
+
 ;--------;
 
 EndFunc
@@ -86,11 +89,19 @@ Func GUI2()
 ;---- Set Window ----;
 Global $gui2 = GUICreate("Klart För Start -", $pwWidth, $pwHeight)
 GUISetBkColor(0xf8f8ff)
-GUISetState(@SW_SHOW, $gui2)
 ;--------;
 
 ;----Create Tab & Menu----;
-   GUIMain()
+GUIMain()
+$tabButton[6] = GUICtrlCreateButton("Program", 10, 0, 80)
+$tabButton[7] = GUICtrlCreateButton("GUI ", 90, 0, 80)
+$tabButton[8] = GUICtrlCreateButton("GUI ", 170, 0, 80)
 ;--------;
 
+EndFunc
+
+Func CreateGUI()
+   GUI0()
+   GUI1()
+   GUI2()
 EndFunc
