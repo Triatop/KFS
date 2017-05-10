@@ -13,9 +13,6 @@
 
 
 #include <GUIConstantsEx.au3>
-#include <StaticConstants.au3>
-#include <WindowsConstants.au3>
-#include <MsgBoxConstants.au3>
 #include <GUI.au3>
 
 ;~ Set Primary Window Height and Width variables ~;
