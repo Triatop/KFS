@@ -30,12 +30,12 @@ Func GUI0()
 Local $boxRowCount = 0
 Local $boxTabCount = 0
 ;---- Set Window ----;
-Global $gui0 = GUICreate("GUI-Test", $pwWidth, $pwHeight)
+Global $gui0 = GUICreate("Klart För Start - Program Install", $pwWidth, $pwHeight)
 GUISetBkColor(0xf8f8ff)
 GUISetState(@SW_SHOW, $gui0)
 ;--------;
 
-   ;----Leave furthest down----;
+;----Create Tab & Menu----;
 GUIMain()
 ;--------;
 
@@ -43,9 +43,11 @@ GUIMain()
 ;---- GUI ----;
 GUICtrlCreateLabel("Standard", 30, 30)
 For $i = 0 To 6
-   GUICtrlCreateCheckbox(IniRead("Resources/Ninite.ini", $i, "name", "Error"), 30, 50 + ($i * 30))
+   GUICtrlCreateCheckbox(IniRead("Resources/Ninite.ini", $i, "name", "Error"), 30 + ($boxTabCount * 100), 50 + ($boxRowCount * 30))
+   $boxRowCount += 1
 Next
 
+$boxRowCount = 0
 $boxTabCount += 1
 GUICtrlCreateLabel("Non-Standard", 130, 30)
 For $i = 7 To 84
@@ -69,12 +71,12 @@ EndFunc
 
 Func GUI1()
 ;---- Set Window ----;
-Global $gui1 = GUICreate("GUI-Test", $pwWidth, $pwHeight)
+Global $gui1 = GUICreate("Klart För Start -", $pwWidth, $pwHeight)
 GUISetBkColor(0xf8f8ff)
 GUISetState(@SW_SHOW, $gui1)
 ;--------;
 
-;----Leave furthest down----;
+;----Create Tab & Menu----;
 GUIMain()
 ;--------;
 
@@ -82,12 +84,12 @@ EndFunc
 
 Func GUI2()
 ;---- Set Window ----;
-Global $gui2 = GUICreate("GUI-Test", $pwWidth, $pwHeight)
+Global $gui2 = GUICreate("Klart För Start -", $pwWidth, $pwHeight)
 GUISetBkColor(0xf8f8ff)
 GUISetState(@SW_SHOW, $gui2)
 ;--------;
 
-;----Leave furthest down----;
+;----Create Tab & Menu----;
    GUIMain()
 ;--------;
 

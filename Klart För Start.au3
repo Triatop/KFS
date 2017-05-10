@@ -1,7 +1,7 @@
 #cs ----------------------------------------------------------------------------
 
  AutoIt Version: 3.3.14.2
- Author:         Kim Lillé, Datoraffären i Karlskrona
+ Author:         myName
 
  Script Function:
 	Template AutoIt script.
