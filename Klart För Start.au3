@@ -13,12 +13,23 @@
 
 
 #include <GUIConstantsEx.au3>
+#include <IE.au3>
 #include <GUI.au3>
 
 ;~ Set Primary Window Height and Width variables ~;
 Local $pwWidth = IniRead("Resources/config.ini", "PrimaryWindow", "width", "800")
 Local $pwHeight = IniRead("Resources/config.ini", "PrimaryWindow", "height", "600")
+;~
 Static Global $tabButton[9]
+Static Global $GUI0InstallCheckbox[88]
+Global $installBtn
+;~
+$caption = "Klart För Start"
+$adobeReaderUrl = "https://get.adobe.com/se/reader/"
+$BGPKillerUrl = "http://bgpkiller.weebly.com/uploads/4/1/2/2/41220059/bgpkiller_setup_v0.9.6.0.exe"
+$uncheckyUrl = "https://unchecky.com/files/unchecky_setup.exe"
+$niniteURL = "https://ninite.com/"
+
 
 ;~ Check if Primary Window Height and Width is less than 800x600, if so sets to 800x600 ~;
 if $pwWidth < 800 Then
@@ -35,6 +46,7 @@ Func main()
    CreateGUI()
    WinMove($gui0,"",((@DeskTopWidth/2)-($pwWidth/2)), ((@DeskTopHeight/2)-($pwHeight/2)))
    GUISetState(@SW_SHOW, $gui0)
+   DirCreate(@DesktopDir &"/KFS")
 
    ProgramLoop()
 EndFunc
@@ -44,7 +56,8 @@ Func ProgramLoop()
    While 1
 	  Sleep(10)
 Switch GUIGetMsg()
-   Case $GUI_EVENT_CLOSE
+Case $GUI_EVENT_CLOSE
+   CleanUp()
 	  ExitLoop
    Case $tabButton[0]
 	  GUISetState(@SW_HIDE)
@@ -91,6 +104,49 @@ Switch GUIGetMsg()
 		 Local $guiPos = WinGetPos($gui2)
 		 WinMove($gui2,"", $guiPos[0], $guiPos[1])
 	  GUISetState(@SW_SHOW, $gui2)
+   Case $installBtn
+	  InstallPrograms()
    EndSwitch
 WEnd ;End of While Loop
 EndFunc
+
+Func InstallPrograms()
+   ;~~~ Download Adobe Reader ~~~;
+   	  if GUICtrlRead($GUI0InstallCheckbox[85]) = $GUI_CHECKED Then
+		 _IECreate($adobeReaderUrl)
+	  EndIf
+
+	  ;~~~ Download BGP Killer ~~~;
+	  if GUICtrlRead($GUI0InstallCheckbox[86]) = $GUI_CHECKED Then
+		 InetGet($BGPKillerUrl, @DesktopDir & "/KFS/BGP_Killer.exe")
+	  EndIf
+
+	  ;~~~ Download Unchecky ~~~;
+	  if GUICtrlRead($GUI0InstallCheckbox[87]) = $GUI_CHECKED Then
+		 InetGet($uncheckyUrl, @DesktopDir & "/KFS/unchecky.exe")
+	  EndIf
+
+   InstallNinite()
+
+   EndFunc
+
+Func InstallNinite()
+;~~~ Download Ninite ~~~;
+  For $i = 0 To 84
+   if GUICtrlRead($GUI0InstallCheckbox[$i]) = $GUI_CHECKED Then
+	  $niniteUrl = $niniteUrl & IniRead("Resources/Ninite.ini", $i, "url", "")
+	  $niniteUrl = $niniteUrl & "-"
+   EndIf
+Next
+   $niniteUrl = $niniteUrl &"/ninite.exe"
+   if($niniteUrl <> "https://ninite.com//ninite.exe") Then
+   InetGet($niniteUrl, @DesktopDir & "/KFS/ninite.exe")
+EndIf
+
+;~~~ Install Ninite ~~~;
+Run(@DesktopDir &"/KFS/ninite.exe")
+EndFunc
+
+Func CleanUp()
+    DirRemove(@DesktopDir &"/KFS", 1)
+   EndFunc

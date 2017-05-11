@@ -43,15 +43,22 @@ $tabButton[2] = GUICtrlCreateButton("GUI", 170, 0, 80)
 ;---- GUI ----;
 GUICtrlCreateLabel("Standard", 30, 30)
 For $i = 0 To 6
-   GUICtrlCreateCheckbox(IniRead("Resources/Ninite.ini", $i, "name", "Error"), 30 + ($boxTabCount * 100), 50 + ($boxRowCount * 30))
+   $GUI0InstallCheckbox[$i] = GUICtrlCreateCheckbox(IniRead("Resources/Ninite.ini", $i, "name", "Error"), 30 + ($boxTabCount * 100), 50 + ($boxRowCount * 30))
    $boxRowCount += 1
 Next
+
+$GUI0InstallCheckbox[85] = GUICtrlCreateCheckbox("Adobe Reader", 30 + ($boxTabCount * 100), 50 + ($boxRowCount * 30))
+$boxRowCount += 1
+$GUI0InstallCheckbox[86] = GUICtrlCreateCheckbox("BGP Killer", 30 + ($boxTabCount * 100), 50 + ($boxRowCount * 30))
+$boxRowCount += 1
+$GUI0InstallCheckbox[87] = GUICtrlCreateCheckbox("UnChecky", 30 + ($boxTabCount * 100), 50 + ($boxRowCount * 30))
+$boxRowCount += 1
 
 $boxRowCount = 0
 $boxTabCount += 1
 GUICtrlCreateLabel("Non-Standard", 130, 30)
 For $i = 7 To 84
-   GUICtrlCreateCheckbox(IniRead("Resources/Ninite.ini", $i, "name", "Error"), 30 + ($boxTabCount * 100), 50 + ($boxRowCount * 30))
+   $GUI0InstallCheckbox[$i] = GUICtrlCreateCheckbox(IniRead("Resources/Ninite.ini", $i, "name", "Error"), 30 + ($boxTabCount * 100), 50 + ($boxRowCount * 30))
    $boxRowCount += 1
    if($boxRowCount > 15) Then
 	   $boxRowCount = 0
@@ -65,6 +72,8 @@ For $i = 0 To 3
    GUICtrlCreateCheckbox("Test", 30 + ($boxTabCount * 100), 50 + ($i * 30))
 Next
 
+   $installBtn = GUICtrlCreateButton("Install", 710, 535, 70, 25)
+   GUICtrlSetState(-1, @SW_SHOW)
 ;--------;
 
 EndFunc
