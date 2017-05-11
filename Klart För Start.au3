@@ -119,11 +119,32 @@ Func InstallPrograms()
 	  ;~~~ Download BGP Killer ~~~;
 	  if GUICtrlRead($GUI0InstallCheckbox[86]) = $GUI_CHECKED Then
 		 InetGet($BGPKillerUrl, @DesktopDir & "/KFS/BGP_Killer.exe")
+		 if FileExists(@DesktopDir &"/KFS/BGP_Killer.exe") Then
+			Run(@DesktopDir &"/KFS/BGP_Killer.exe")
+			WinWait("Setup - BGPKiller", "Welcome to the BGPKiller Setup Wizard")
+			ControlClick("Setup - BGPKiller", "", "[CLASS:TNewButton; INSTANCE:1]")
+			WinWait("Setup - BGPKiller", "License Agreement")
+			ControlClick("Setup - BGPKiller", "", "[CLASSNN:TNewRadioButton1]")
+			ControlClick("Setup - BGPKiller", "", "[CLASS:TNewButton; INSTANCE:2]")
+			WinWait("Setup - BGPKiller", "Select Destination Location")
+			ControlClick("Setup - BGPKiller", "", "[CLASS:TNewButton; INSTANCE:3]")
+			WinWait("Setup - BGPKiller", "Select Start Menu Folder")
+			ControlClick("Setup - BGPKiller", "", "[CLASS:TNewButton; INSTANCE:4]")
+			WinWait("Setup - BGPKiller", "Select Additional Tasks")
+			ControlClick("Setup - BGPKiller", "", "[CLASS:TNewButton; INSTANCE:4]")
+			WinWait("Setup - BGPKiller", "Ready to Install")
+			ControlClick("Setup - BGPKiller", "", "[CLASS:TNewButton; INSTANCE:4]")
+			WinWait("Setup - BGPKiller", "&Finish")
+			ControlClick("Setup - BGPKiller", "", "[CLASS:TNewButton; INSTANCE:4]")
+		 EndIf
 	  EndIf
 
 	  ;~~~ Download Unchecky ~~~;
 	  if GUICtrlRead($GUI0InstallCheckbox[87]) = $GUI_CHECKED Then
 		 InetGet($uncheckyUrl, @DesktopDir & "/KFS/unchecky.exe")
+		 if FileExists(@DesktopDir &"/KFS/unchecky.exe") Then
+			Run(@DesktopDir &"/KFS/unchecky.exe")
+		 EndIf
 	  EndIf
 
    InstallNinite()
@@ -138,13 +159,18 @@ Func InstallNinite()
 	  $niniteUrl = $niniteUrl & "-"
    EndIf
 Next
+   if($niniteUrl <> "https://ninite.com/") Then
    $niniteUrl = $niniteUrl &"/ninite.exe"
-   if($niniteUrl <> "https://ninite.com//ninite.exe") Then
    InetGet($niniteUrl, @DesktopDir & "/KFS/ninite.exe")
 EndIf
 
 ;~~~ Install Ninite ~~~;
-Run(@DesktopDir &"/KFS/ninite.exe")
+if FileExists(@DesktopDir &"/KFS/ninite.exe") Then
+   Run(@DesktopDir &"/KFS/ninite.exe")
+   WinWait("Ninite", "Finished.")
+   ControlClick("Ninite", "", 2)
+EndIf
+
 EndFunc
 
 Func CleanUp()

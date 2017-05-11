@@ -28,7 +28,7 @@ Func GUI0()
 Local $boxRowCount = 0
 Local $boxTabCount = 0
 ;---- Set Window ----;
-Global $gui0 = GUICreate("Klart För Start - Program Install", $pwWidth, $pwHeight)
+Global $gui0 = GUICreate($caption &" - Program Install", $pwWidth, $pwHeight)
 GUISetBkColor(0xf8f8ff)
 ;--------;
 
@@ -80,7 +80,7 @@ EndFunc
 
 Func GUI1()
 ;---- Set Window ----;
-Global $gui1 = GUICreate("Klart För Start -", $pwWidth, $pwHeight)
+Global $gui1 = GUICreate($caption &" -", $pwWidth, $pwHeight)
 GUISetBkColor(0xf8f8ff)
 ;--------;
 
@@ -96,7 +96,7 @@ EndFunc
 
 Func GUI2()
 ;---- Set Window ----;
-Global $gui2 = GUICreate("Klart För Start -", $pwWidth, $pwHeight)
+Global $gui2 = GUICreate($caption &" -", $pwWidth, $pwHeight)
 GUISetBkColor(0xf8f8ff)
 ;--------;
 
