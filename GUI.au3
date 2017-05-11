@@ -15,9 +15,10 @@ Func GUIMain()
 
 	  ;---- Menu ----;
 Global $menu1 = GUICtrlCreateMenu("File")
-Global $menu1button1 = GUICtrlCreateMenuItem("Save to standard", $menu1)
-Global $menu1button2 = GUICtrlCreateMenuItem("Set default to standard", $menu1)
-Global $menu2 = GUICtrlCreateMenu("Help")
+Global $menu2 = GUICtrlCreateMenu("Save")
+Global $menu2button1 = GUICtrlCreateMenuItem("Save to standard", $menu2)
+Global $menu2button2 = GUICtrlCreateMenuItem("Set default to standard", $menu2)
+Global $menu3 = GUICtrlCreateMenu("Help")
 
 GUICtrlCreateGroup("", 10, 10, 780, 560)
 

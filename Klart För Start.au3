@@ -119,6 +119,7 @@ Func InstallPrograms()
 	  ;~~~ Download BGP Killer ~~~;
 	  if GUICtrlRead($GUI0InstallCheckbox[86]) = $GUI_CHECKED Then
 		 InetGet($BGPKillerUrl, @DesktopDir & "/KFS/BGP_Killer.exe")
+	  ;~~~ Install BGP Killer ~~~;
 		 if FileExists(@DesktopDir &"/KFS/BGP_Killer.exe") Then
 			Run(@DesktopDir &"/KFS/BGP_Killer.exe")
 			WinWait("Setup - BGPKiller", "Welcome to the BGPKiller Setup Wizard")
@@ -142,8 +143,13 @@ Func InstallPrograms()
 	  ;~~~ Download Unchecky ~~~;
 	  if GUICtrlRead($GUI0InstallCheckbox[87]) = $GUI_CHECKED Then
 		 InetGet($uncheckyUrl, @DesktopDir & "/KFS/unchecky.exe")
+		 ;~~~ Install Unchecky ~~~;
 		 if FileExists(@DesktopDir &"/KFS/unchecky.exe") Then
 			Run(@DesktopDir &"/KFS/unchecky.exe")
+			WinWait("Unchecky v1.0.2 Installation", "Välkommen till installationen av Unchecky")
+			ControlClick("Unchecky v1.0.2 Installation", "", "[CLASS:Button; INSTANCE:2]")
+			WinWait("Unchecky v1.0.2 Installation", "Gratulerar!")
+			ControlClick("Unchecky v1.0.2 Installation", "", "[CLASS:Button; INSTANCE:2]")
 		 EndIf
 	  EndIf
 
