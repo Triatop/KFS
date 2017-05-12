@@ -115,6 +115,10 @@ WEnd ;End of While Loop
 EndFunc
 
 Func InstallPrograms()
+   GUISetState(@SW_HIDE, $gui0)
+   GUISetState(@SW_HIDE, $gui1)
+   GUISetState(@SW_HIDE, $gui2)
+
    ProgressBarClear()
    ProgressBarCheckGoal()
 
@@ -171,6 +175,8 @@ Func InstallPrograms()
 		    ProgressBarIncrease()
 		 EndIf
    InstallNinite()
+
+   GUISetState(@SW_SHOW, $gui0)
 
    EndFunc
 

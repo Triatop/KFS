@@ -12,18 +12,19 @@
 
    Static $progressBar_Width = 150
    Static $progressBar_Height = 50
-   $progressbar_current = 0
-   $progressbar_goal = 0
+   Global $progressbar_current = 0
+   Global $progressbar_goal = 0
+   Global $progressText = ""
 
 
 Func ProgressBarInit() ;~
    Global $guiProgressBar = GUICreate("Progress Bar", $progressBar_Width, $progressBar_Height, (@DeskTopWidth - $progressBar_Width), (@DeskTopHeight  - ($progressBar_Height*2)))
    GUICtrlCreateLabel("Progress:", $progressBar_Width/2 - 10 ,$progressBar_Height/2 - 20 )
-   ProgressBarUpdate()
+   $progressText = GUICtrlCreateLabel($progressbar_current & '/' & $progressbar_goal, $progressBar_Width/2 ,$progressBar_Height/2 )
    EndFunc
 
 Func ProgressBarUpdate() ;~
-	  GUICtrlCreateLabel($progressbar_current & '/' & $progressbar_goal, $progressBar_Width/2 ,$progressBar_Height/2 )
+	  GUICtrlSetData($progressText, $progressbar_current & '/' & $progressbar_goal)
    EndFunc
 
 Func ProgressBarIncrease() ;~
