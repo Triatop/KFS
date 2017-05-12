@@ -44,22 +44,23 @@ $tabButton[2] = GUICtrlCreateButton("GUI", 170, 0, 80)
 ;---- GUI ----;
 GUICtrlCreateLabel("Standard", 30, 30)
 For $i = 0 To 6
-   $GUI0InstallCheckbox[$i] = GUICtrlCreateCheckbox(IniRead("Resources/Ninite.ini", $i, "name", "Error"), 30 + ($boxTabCount * 100), 50 + ($boxRowCount * 30))
+   $GUI0InstallCheckbox[$i] = GUICtrlCreateCheckbox(IniRead("Resources/Ninite.ini", $i, "name", "Error"), 30 + ($boxTabCount * 110), 50 + ($boxRowCount * 30))
    $boxRowCount += 1
 Next
 
-$GUI0InstallCheckbox[85] = GUICtrlCreateCheckbox("Adobe Reader", 30 + ($boxTabCount * 100), 50 + ($boxRowCount * 30))
+$GUI0InstallCheckbox[85] = GUICtrlCreateCheckbox("Adobe Reader", 30 + ($boxTabCount * 110), 50 + ($boxRowCount * 30))
 $boxRowCount += 1
-$GUI0InstallCheckbox[86] = GUICtrlCreateCheckbox("BGP Killer", 30 + ($boxTabCount * 100), 50 + ($boxRowCount * 30))
+$GUI0InstallCheckbox[86] = GUICtrlCreateCheckbox("BGP Killer", 30 + ($boxTabCount * 110), 50 + ($boxRowCount * 30))
 $boxRowCount += 1
-$GUI0InstallCheckbox[87] = GUICtrlCreateCheckbox("UnChecky", 30 + ($boxTabCount * 100), 50 + ($boxRowCount * 30))
+$GUI0InstallCheckbox[87] = GUICtrlCreateCheckbox("UnChecky", 30 + ($boxTabCount * 110), 50 + ($boxRowCount * 30))
 $boxRowCount += 1
+$GUI0InstallCheckbox[88] = GUICtrlCreateCheckbox("Support på distans", 30 + ($boxTabCount * 110), 50 + ($boxRowCount * 30))
 
 $boxRowCount = 0
 $boxTabCount += 1
 GUICtrlCreateLabel("Non-Standard", 130, 30)
 For $i = 7 To 84
-   $GUI0InstallCheckbox[$i] = GUICtrlCreateCheckbox(IniRead("Resources/Ninite.ini", $i, "name", "Error"), 30 + ($boxTabCount * 100), 50 + ($boxRowCount * 30))
+   $GUI0InstallCheckbox[$i] = GUICtrlCreateCheckbox(IniRead("Resources/Ninite.ini", $i, "name", "Error"), 30 + ($boxTabCount * 110), 50 + ($boxRowCount * 30))
    $boxRowCount += 1
    if($boxRowCount > 15) Then
 	   $boxRowCount = 0
@@ -68,10 +69,16 @@ For $i = 7 To 84
 	Next
 
 $boxTabCount += 1
-GUICtrlCreateLabel("ESET", 30 + ($boxTabCount * 100), 30)
-For $i = 0 To 3
-   GUICtrlCreateCheckbox("Test", 30 + ($boxTabCount * 100), 50 + ($i * 30))
-Next
+$boxRowCount = 0
+GUICtrlCreateLabel("ESET", 30 + ($boxTabCount * 110), 30)
+
+GUICtrlCreateCheckbox("Nod32", 30 + ($boxTabCount * 110), 50 + ($boxRowCount * 30))
+$boxRowCount = $boxRowCount + 1
+GUICtrlCreateCheckbox("Internet Security", 30 + ($boxTabCount * 110), 50 + ($boxRowCount * 30))
+$boxRowCount = $boxRowCount + 1
+GUICtrlCreateCheckbox("Smart Security", 30 + ($boxTabCount * 110), 50 + ($boxRowCount * 30))
+$boxRowCount = $boxRowCount + 1
+GUICtrlCreateCheckbox("Smart Security Pro", 30 + ($boxTabCount * 110), 50 + ($boxRowCount * 30))
 
    $installBtn = GUICtrlCreateButton("Install", 710, 535, 70, 25)
    GUICtrlSetState(-1, @SW_SHOW)

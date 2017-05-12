@@ -15,13 +15,14 @@
 #include <GUIConstantsEx.au3>
 #include <IE.au3>
 #include <GUI.au3>
+#include <ProgressBar.au3>
 
 ;~ Set Primary Window Height and Width variables ~;
 Local $pwWidth = IniRead("Resources/config.ini", "PrimaryWindow", "width", "800")
 Local $pwHeight = IniRead("Resources/config.ini", "PrimaryWindow", "height", "600")
 ;~
 Static Global $tabButton[9]
-Static Global $GUI0InstallCheckbox[88]
+Static Global $GUI0InstallCheckbox[89]
 Global $installBtn
 ;~
 $caption = "Klart För Start"
@@ -47,6 +48,8 @@ Func main()
    WinMove($gui0,"",((@DeskTopWidth/2)-($pwWidth/2)), ((@DeskTopHeight/2)-($pwHeight/2)))
    GUISetState(@SW_SHOW, $gui0)
    DirCreate(@DesktopDir &"/KFS")
+
+   ProgressBarInit()
 
    ProgramLoop()
 EndFunc
@@ -105,15 +108,21 @@ Case $GUI_EVENT_CLOSE
 		 WinMove($gui2,"", $guiPos[0], $guiPos[1])
 	  GUISetState(@SW_SHOW, $gui2)
    Case $installBtn
+	  GUISetState(@SW_SHOW, $guiProgressBar)
 	  InstallPrograms()
    EndSwitch
 WEnd ;End of While Loop
 EndFunc
 
 Func InstallPrograms()
+   ProgressBarClear()
+   ProgressBarCheckGoal()
+
    ;~~~ Download Adobe Reader ~~~;
    	  if GUICtrlRead($GUI0InstallCheckbox[85]) = $GUI_CHECKED Then
 		 _IECreate($adobeReaderUrl)
+
+		    ProgressBarIncrease()
 	  EndIf
 
 	  ;~~~ Download BGP Killer ~~~;
@@ -137,6 +146,8 @@ Func InstallPrograms()
 			ControlClick("Setup - BGPKiller", "", "[CLASS:TNewButton; INSTANCE:4]")
 			WinWait("Setup - BGPKiller", "&Finish")
 			ControlClick("Setup - BGPKiller", "", "[CLASS:TNewButton; INSTANCE:4]")
+
+			   ProgressBarIncrease()
 		 EndIf
 	  EndIf
 
@@ -150,9 +161,15 @@ Func InstallPrograms()
 			ControlClick("Unchecky v1.0.2 Installation", "", "[CLASS:Button; INSTANCE:2]")
 			WinWait("Unchecky v1.0.2 Installation", "Gratulerar!")
 			ControlClick("Unchecky v1.0.2 Installation", "", "[CLASS:Button; INSTANCE:2]")
+
+			ProgressBarIncrease()
 		 EndIf
 	  EndIf
 
+	  If GUICtrlRead($GUI0InstallCheckbox[88]) = $GUI_CHECKED Then
+		 InetGet("http://www.datoraffaren.se/datoraffarensupport.exe", @DesktopDir &"/Datoraffärensupport.exe")
+		    ProgressBarIncrease()
+		 EndIf
    InstallNinite()
 
    EndFunc
@@ -175,8 +192,8 @@ if FileExists(@DesktopDir &"/KFS/ninite.exe") Then
    Run(@DesktopDir &"/KFS/ninite.exe")
    WinWait("Ninite", "Finished.")
    ControlClick("Ninite", "", 2)
+   ProgressBarIncrease()
 EndIf
-
 EndFunc
 
 Func CleanUp()
