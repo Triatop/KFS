@@ -10,19 +10,18 @@
 
 ; Script Start - Add your code below here
 
-
 Func GUIMain()
-
-	  ;---- Menu ----;
-Global $menu1 = GUICtrlCreateMenu("File")
-Global $menu2 = GUICtrlCreateMenu("Save")
-Global $menu2button1 = GUICtrlCreateMenuItem("Save to standard", $menu2)
-Global $menu2button2 = GUICtrlCreateMenuItem("Set default to standard", $menu2)
-Global $menu3 = GUICtrlCreateMenu("Help")
 
 GUICtrlCreateGroup("", 10, 10, 780, 560)
 
-EndFunc
+   	  ;---- Menu ----;
+ Global $menu1 = GUICtrlCreateMenu("File")
+ Global $menu2 = GUICtrlCreateMenu("Save")
+ Global $menu2button1 = GUICtrlCreateMenuItem("Save to standard", $menu2)
+ Global $menu2button2 = GUICtrlCreateMenuItem("Set default to standard", $menu2)
+ Global $menu3 = GUICtrlCreateMenu("Help")
+
+ EndFunc
 
 Func GUI0()
 
@@ -61,6 +60,7 @@ $boxTabCount += 1
 GUICtrlCreateLabel("Non-Standard", 130, 30)
 For $i = 7 To 84
    $GUI0InstallCheckbox[$i] = GUICtrlCreateCheckbox(IniRead("Resources/Ninite.ini", $i, "name", "Error"), 30 + ($boxTabCount * 110), 50 + ($boxRowCount * 30))
+
    $boxRowCount += 1
    if($boxRowCount > 15) Then
 	   $boxRowCount = 0
@@ -72,17 +72,24 @@ $boxTabCount += 1
 $boxRowCount = 0
 GUICtrlCreateLabel("ESET", 30 + ($boxTabCount * 110), 30)
 
-GUICtrlCreateCheckbox("Nod32", 30 + ($boxTabCount * 110), 50 + ($boxRowCount * 30))
+$GUI0InstallCheckbox[89] = GUICtrlCreateCheckbox("Nod32", 20 + ($boxTabCount * 110), 50 + ($boxRowCount * 30))
 $boxRowCount = $boxRowCount + 1
-GUICtrlCreateCheckbox("Internet Security", 30 + ($boxTabCount * 110), 50 + ($boxRowCount * 30))
+$GUI0InstallCheckbox[90] = GUICtrlCreateCheckbox("Internet Security", 20 + ($boxTabCount * 110), 50 + ($boxRowCount * 30))
 $boxRowCount = $boxRowCount + 1
-GUICtrlCreateCheckbox("Smart Security", 30 + ($boxTabCount * 110), 50 + ($boxRowCount * 30))
+$GUI0InstallCheckbox[91] = GUICtrlCreateCheckbox("Smart Security", 20 + ($boxTabCount * 110), 50 + ($boxRowCount * 30))
 $boxRowCount = $boxRowCount + 1
-GUICtrlCreateCheckbox("Smart Security Pro", 30 + ($boxTabCount * 110), 50 + ($boxRowCount * 30))
+$GUI0InstallCheckbox[92] = GUICtrlCreateCheckbox("Smart Security Pro", 20 + ($boxTabCount * 110), 50 + ($boxRowCount * 30))
 
    $installBtn = GUICtrlCreateButton("Install", 710, 535, 70, 25)
    GUICtrlSetState(-1, @SW_SHOW)
 ;--------;
+
+;~~ Load Standard values ~~;
+	For $i = 0 To UBound($GUI0InstallCheckbox) - 1
+	   if(IniRead("Resources/Ninite.ini", $i, "standard", 0) == 1) Then
+		 GUICtrlSetState($GUI0InstallCheckbox[$i], $GUI_CHECKED)
+	  EndIf
+   Next
 
 EndFunc
 
@@ -93,7 +100,7 @@ GUISetBkColor(0xf8f8ff)
 ;--------;
 
 ;----Create Tab & Menu----;
-GUIMain()
+;~ GUIMain()
 $tabButton[3] = GUICtrlCreateButton("Program", 10, 0, 80)
 $tabButton[4] = GUICtrlCreateButton("GUI ", 90, 0, 80)
 $tabButton[5] = GUICtrlCreateButton("GUI ", 170, 0, 80)
@@ -109,7 +116,7 @@ GUISetBkColor(0xf8f8ff)
 ;--------;
 
 ;----Create Tab & Menu----;
-GUIMain()
+;~ GUIMain()
 $tabButton[6] = GUICtrlCreateButton("Program", 10, 0, 80)
 $tabButton[7] = GUICtrlCreateButton("GUI ", 90, 0, 80)
 $tabButton[8] = GUICtrlCreateButton("GUI ", 170, 0, 80)
@@ -118,6 +125,7 @@ $tabButton[8] = GUICtrlCreateButton("GUI ", 170, 0, 80)
 EndFunc
 
 Func CreateGUI()
+   GUIMain()
    GUI0()
    GUI1()
    GUI2()

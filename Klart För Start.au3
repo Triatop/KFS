@@ -16,14 +16,16 @@
 #include <IE.au3>
 #include <GUI.au3>
 #include <ProgressBar.au3>
+#include <MsgBoxConstants.au3>
 
 ;~ Set Primary Window Height and Width variables ~;
 Local $pwWidth = IniRead("Resources/config.ini", "PrimaryWindow", "width", "800")
 Local $pwHeight = IniRead("Resources/config.ini", "PrimaryWindow", "height", "600")
 ;~
 Static Global $tabButton[9]
-Static Global $GUI0InstallCheckbox[89]
+Static Global $GUI0InstallCheckbox[100]
 Global $installBtn
+
 ;~
 $caption = "Klart För Start"
 $adobeReaderUrl = "https://get.adobe.com/se/reader/"
@@ -107,9 +109,27 @@ Case $GUI_EVENT_CLOSE
 		 Local $guiPos = WinGetPos($gui2)
 		 WinMove($gui2,"", $guiPos[0], $guiPos[1])
 	  GUISetState(@SW_SHOW, $gui2)
+
+  ;~~ Pressed install button ~~;
    Case $installBtn
 	  GUISetState(@SW_SHOW, $guiProgressBar)
 	  InstallPrograms()
+
+ Case $menu2button1
+	For $i = 0 To UBound($GUI0InstallCheckbox) - 1
+	   IniWrite("Resources/Ninite.ini", $i, "standard", "0")
+	   if GUICtrlRead($GUI0InstallCheckbox[$i]) = $GUI_CHECKED Then
+		 IniWrite("Resources/Ninite.ini", $i, "standard", "1")
+	  EndIf
+   Next
+Case $menu2button2
+   For $i = 0 To UBound($GUI0InstallCheckbox) - 1
+	  	   IniWrite("Resources/Ninite.ini", $i, "standard", "0")
+	  If IniRead("Resources/Ninite.ini", $i, "default", 0) = 1 Then
+		 IniWrite("Resources/Ninite.ini", $i, "standard", "1")
+	  EndIf
+   Next
+
    EndSwitch
 WEnd ;End of While Loop
 EndFunc
