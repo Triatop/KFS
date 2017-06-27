@@ -23,12 +23,11 @@
 Local $pwWidth = IniRead("Resources/config.ini", "PrimaryWindow", "width", "800")
 Local $pwHeight = IniRead("Resources/config.ini", "PrimaryWindow", "height", "600")
 ;~
-Static Global $tabButton[9]
 Static Global $GUI0InstallCheckbox[100]
 Global $installBtn
 
 ;~
-$caption = "Klart För Start"
+$caption = "Klart För Start - "
 $adobeReaderUrl = "https://get.adobe.com/se/reader/"
 $BGPKillerUrl = "http://bgpkiller.weebly.com/uploads/4/1/2/2/41220059/bgpkiller_setup_v0.9.6.0.exe"
 $uncheckyUrl = "https://unchecky.com/files/unchecky_setup.exe"
@@ -40,16 +39,31 @@ If $pwWidth < 800 Then
 	$pwWidth = 800
 EndIf
 If $pwHeight < 600 Then
-	$pwWidth = 600
+	$pwHeight = 600
 EndIf
 
 ;~ Calls Main function to run program ~;
-main()
+Main()
 
-Func main()
-	CreateGUI()
-	WinMove($gui0, "", ((@DesktopWidth / 2) - ($pwWidth / 2)), ((@DesktopHeight / 2) - ($pwHeight / 2)))
-	GUISetState(@SW_SHOW, $gui0)
+Func Main()
+   GUICreate($caption, $pwWidth, $pwHeight) ; will create a dialog box that when displayed is centered
+   GUIMain()
+
+   ;~~~ Create tabs ~~~;
+   GUICtrlCreateTab(0, 0, $pwWidth, $pwHeight)
+
+    $installs = GUICtrlCreateTabItem("Installs")
+	GUI0()
+
+    GUICtrlCreateTabItem("GUI1")
+	GUI1()
+
+    GUICtrlCreateTabItem("GUI2")
+	GUI2()
+
+    GUICtrlCreateTabItem("") ; end tabitem definition
+    GUISetState(@SW_SHOW)
+
 	DirCreate(@DesktopDir & "/KFS")
 
 	ProgressBarInit()
@@ -65,51 +79,6 @@ Func ProgramLoop()
 			Case $GUI_EVENT_CLOSE
 				CleanUp()
 				ExitLoop
-			Case $tabButton[0]
-				GUISetState(@SW_HIDE)
-				Local $guiPos = WinGetPos($gui0)
-				WinMove($gui0, "", $guiPos[0], $guiPos[1])
-				GUISetState(@SW_SHOW, $gui0)
-			Case $tabButton[1]
-				GUISetState(@SW_HIDE)
-				Local $guiPos = WinGetPos($gui0)
-				WinMove($gui1, "", $guiPos[0], $guiPos[1])
-				GUISetState(@SW_SHOW, $gui1)
-			Case $tabButton[2]
-				GUISetState(@SW_HIDE)
-				Local $guiPos = WinGetPos($gui0)
-				WinMove($gui2, "", $guiPos[0], $guiPos[1])
-				GUISetState(@SW_SHOW, $gui2)
-			Case $tabButton[3]
-				GUISetState(@SW_HIDE)
-				Local $guiPos = WinGetPos($gui1)
-				WinMove($gui0, "", $guiPos[0], $guiPos[1])
-				GUISetState(@SW_SHOW, $gui0)
-			Case $tabButton[4]
-				GUISetState(@SW_HIDE)
-				Local $guiPos = WinGetPos($gui1)
-				WinMove($gui1, "", $guiPos[0], $guiPos[1])
-				GUISetState(@SW_SHOW, $gui1)
-			Case $tabButton[5]
-				GUISetState(@SW_HIDE)
-				Local $guiPos = WinGetPos($gui1)
-				WinMove($gui2, "", $guiPos[0], $guiPos[1])
-				GUISetState(@SW_SHOW, $gui2)
-			Case $tabButton[6]
-				GUISetState(@SW_HIDE)
-				Local $guiPos = WinGetPos($gui2)
-				WinMove($gui0, "", $guiPos[0], $guiPos[1])
-				GUISetState(@SW_SHOW, $gui0)
-			Case $tabButton[7]
-				GUISetState(@SW_HIDE)
-				Local $guiPos = WinGetPos($gui2)
-				WinMove($gui1, "", $guiPos[0], $guiPos[1])
-				GUISetState(@SW_SHOW, $gui1)
-			Case $tabButton[8]
-				GUISetState(@SW_HIDE)
-				Local $guiPos = WinGetPos($gui2)
-				WinMove($gui2, "", $guiPos[0], $guiPos[1])
-				GUISetState(@SW_SHOW, $gui2)
 
 ;~~ Pressed install button ~~;
 			Case $installBtn
@@ -136,10 +105,6 @@ Func ProgramLoop()
 EndFunc   ;==>ProgramLoop
 
 Func InstallPrograms()
-	GUISetState(@SW_HIDE, $gui0)
-	GUISetState(@SW_HIDE, $gui1)
-	GUISetState(@SW_HIDE, $gui2)
-
 	ProgressBarClear()
 	ProgressBarCheckGoal()
 
@@ -216,9 +181,6 @@ Func InstallPrograms()
 		ProgressBarIncrease()
 	EndIf
 	InstallNinite()
-
-	GUISetState(@SW_SHOW, $gui0)
-
 EndFunc   ;==>InstallPrograms
 
 Func InstallNinite()

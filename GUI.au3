@@ -11,10 +11,7 @@
 ; Script Start - Add your code below here
 
 Func GUIMain()
-
-GUICtrlCreateGroup("", 10, 10, 780, 560)
-
-   	  ;---- Menu ----;
+   ;---- Menu ----;
  Global $menu1 = GUICtrlCreateMenu("File")
  Global $menu2 = GUICtrlCreateMenu("Save")
  Global $menu2button1 = GUICtrlCreateMenuItem("Save to standard", $menu2)
@@ -24,20 +21,9 @@ GUICtrlCreateGroup("", 10, 10, 780, 560)
  EndFunc
 
 Func GUI0()
-
+;~~~ Create Variables ~~~;
 Local $boxRowCount = 0
 Local $boxTabCount = 0
-;---- Set Window ----;
-Global $gui0 = GUICreate($caption &" - Program Install", $pwWidth, $pwHeight)
-GUISetBkColor(0xf8f8ff)
-;--------;
-
-;----Create Tab & Menu----;
-GUIMain()
-$tabButton[0] = GUICtrlCreateButton("Program", 10, 0, 80)
-$tabButton[1] = GUICtrlCreateButton("GUI", 90, 0, 80)
-$tabButton[2] = GUICtrlCreateButton("GUI", 170, 0, 80)
-;--------;
 
 
 ;---- GUI ----;
@@ -81,11 +67,10 @@ $boxRowCount = $boxRowCount + 1
 $GUI0InstallCheckbox[92] = GUICtrlCreateCheckbox("Smart Security Pro", 20 + ($boxTabCount * 110), 50 + ($boxRowCount * 30))
 
    $installBtn = GUICtrlCreateButton("Install", 710, 535, 70, 25)
-   GUICtrlSetState(-1, @SW_SHOW)
 ;--------;
 
-;~~ Load Standard values ~~;
-	For $i = 0 To UBound($GUI0InstallCheckbox) - 1
+;~ Load Standard values ~~;
+	For $i = 0 To UBound($GUI0InstallCheckbox) - 1 Step 1
 	   if(IniRead("Resources/Ninite.ini", $i, "standard", 0) == 1) Then
 		 GUICtrlSetState($GUI0InstallCheckbox[$i], $GUI_CHECKED)
 	  EndIf
@@ -93,40 +78,14 @@ $GUI0InstallCheckbox[92] = GUICtrlCreateCheckbox("Smart Security Pro", 20 + ($bo
 
 EndFunc
 
+;~~~ ~~~;
 Func GUI1()
-;---- Set Window ----;
-Global $gui1 = GUICreate($caption &" -", $pwWidth, $pwHeight)
-GUISetBkColor(0xf8f8ff)
-;--------;
-
-;----Create Tab & Menu----;
-;~ GUIMain()
-$tabButton[3] = GUICtrlCreateButton("Program", 10, 0, 80)
-$tabButton[4] = GUICtrlCreateButton("GUI ", 90, 0, 80)
-$tabButton[5] = GUICtrlCreateButton("GUI ", 170, 0, 80)
-
-;--------;
-
+   ;~~~
+   ;~~~
 EndFunc
 
+;~~~ ~~~;
 Func GUI2()
-;---- Set Window ----;
-Global $gui2 = GUICreate($caption &" -", $pwWidth, $pwHeight)
-GUISetBkColor(0xf8f8ff)
-;--------;
-
-;----Create Tab & Menu----;
-;~ GUIMain()
-$tabButton[6] = GUICtrlCreateButton("Program", 10, 0, 80)
-$tabButton[7] = GUICtrlCreateButton("GUI ", 90, 0, 80)
-$tabButton[8] = GUICtrlCreateButton("GUI ", 170, 0, 80)
-;--------;
-
-EndFunc
-
-Func CreateGUI()
-   GUIMain()
-   GUI0()
-   GUI1()
-   GUI2()
+   ;~~~
+   ;~~~
 EndFunc
