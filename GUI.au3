@@ -14,8 +14,8 @@ Func GUIMain()
    ;---- Menu ----;
  Global $menu1 = GUICtrlCreateMenu("File")
  Global $menu2 = GUICtrlCreateMenu("Save")
- Global $menu2button1 = GUICtrlCreateMenuItem("Save to standard", $menu2)
- Global $menu2button2 = GUICtrlCreateMenuItem("Set default to standard", $menu2)
+ Global $menu2button1 = GUICtrlCreateMenuItem("Save to defaults", $menu2)
+ Global $menu2button2 = GUICtrlCreateMenuItem("Restore defaults", $menu2)
  Global $menu3 = GUICtrlCreateMenu("Help")
 
  EndFunc
@@ -65,16 +65,14 @@ $boxRowCount = $boxRowCount + 1
 $GUI0InstallCheckbox[91] = GUICtrlCreateCheckbox("Smart Security", 20 + ($boxTabCount * 110), 50 + ($boxRowCount * 30))
 $boxRowCount = $boxRowCount + 1
 $GUI0InstallCheckbox[92] = GUICtrlCreateCheckbox("Smart Security Pro", 20 + ($boxTabCount * 110), 50 + ($boxRowCount * 30))
-
-   $installBtn = GUICtrlCreateButton("Install", 710, 535, 70, 25)
 ;--------;
 
-;~ Load Standard values ~~;
-	For $i = 0 To UBound($GUI0InstallCheckbox) - 1 Step 1
-	   if(IniRead("Resources/Ninite.ini", $i, "standard", 0) == 1) Then
-		 GUICtrlSetState($GUI0InstallCheckbox[$i], $GUI_CHECKED)
-	  EndIf
-   Next
+;~ Load default values ~~;
+CheckDefaultPrograms()
+
+   $uncheckBtn = GUICtrlCreateButton("Uncheck all", 20, 545, 80, 25)
+   $checkBtn = GUICtrlCreateButton("Check defaults", 105, 545, 90, 25)
+   $installBtn = GUICtrlCreateButton("Apply", 710, 545, 70, 25)
 
 EndFunc
 

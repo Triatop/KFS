@@ -25,6 +25,8 @@ Local $pwHeight = IniRead("Resources/config.ini", "PrimaryWindow", "height", "60
 ;~
 Static Global $GUI0InstallCheckbox[100]
 Global $installBtn
+Global $uncheckBtn
+Global $checkBtn
 
 ;~
 $caption = "Klart För Start - "
@@ -52,10 +54,10 @@ Func Main()
    ;~~~ Create tabs ~~~;
    GUICtrlCreateTab(0, 0, $pwWidth, $pwHeight)
 
-    $installs = GUICtrlCreateTabItem("Installs")
+    $installs = GUICtrlCreateTabItem("Install")
 	GUI0()
 
-    GUICtrlCreateTabItem("GUI1")
+    GUICtrlCreateTabItem("Settings")
 	GUI1()
 
     GUICtrlCreateTabItem("GUI2")
@@ -85,6 +87,14 @@ Func ProgramLoop()
 				GUISetState(@SW_SHOW, $guiProgressBar)
 				InstallPrograms()
 
+			Case $uncheckBtn
+			   	For $i = 0 To UBound($GUI0InstallCheckbox) - 1 Step 1
+					  GUICtrlSetState($GUI0InstallCheckbox[$i], $GUI_UNCHECKED)
+				   Next
+			Case $checkBtn
+			    ;~ Load default values ~~;
+			    CheckDefaultPrograms()
+
 			Case $menu2button1
 				For $i = 0 To UBound($GUI0InstallCheckbox) - 1
 					IniWrite("Resources/Ninite.ini", $i, "standard", "0")
@@ -97,7 +107,7 @@ Func ProgramLoop()
 					IniWrite("Resources/Ninite.ini", $i, "standard", "0")
 					If IniRead("Resources/Ninite.ini", $i, "default", 0) = 1 Then
 						IniWrite("Resources/Ninite.ini", $i, "standard", "1")
-					EndIf
+					 EndIf
 				Next
 
 		EndSwitch
@@ -208,3 +218,12 @@ EndFunc   ;==>InstallNinite
 Func CleanUp()
 	DirRemove(@DesktopDir & "/KFS", 1)
 EndFunc   ;==>CleanUp
+
+Func CheckDefaultPrograms()
+   ;~ Load Standard values ~~;
+	For $i = 0 To UBound($GUI0InstallCheckbox) - 1 Step 1
+	   if(IniRead("Resources/Ninite.ini", $i, "standard", 0) == 1) Then
+		 GUICtrlSetState($GUI0InstallCheckbox[$i], $GUI_CHECKED)
+	  EndIf
+   Next
+   EndFunc
