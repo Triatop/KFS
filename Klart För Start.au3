@@ -127,12 +127,19 @@ Func InstallPrograms()
 		FileClose($hFileOpen)
 
 		;Find the current version number in the changelog
-		Local $versionNrArray = StringRegExp($sFileRead, "\d{2}.\d{3}.\d{5}", $STR_REGEXPARRAYMATCH)
+		Local $versionNrArray = StringRegExp($sFileRead, "\d{2}.\d{3}.\d{5}", $STR_REGEXPARRAYGLOBALMATCH)
 		Local $versionNr = StringReplace($versionNrArray[0], ".", "")
 
 		;Download the latest version of Adobe reader
-		Local $readerUrl = "http://ardownload.adobe.com/pub/adobe/reader/win/AcrobatDC/" & $versionNr & "/AcroRdrDC" & $versionNr & "_sv_SE.exe"
-		InetGet($readerUrl, @DesktopDir & "/KFS/reader.exe")
+		Local $versionNr = ""
+		Local $readerUrl = ""
+		Local $readerDownloadSucess = 0
+		For $i = 0 To Ubound($versionNrArray) Step 1
+			$versionNr = StringReplace($versionNrArray[$i], ".", "")
+			$readerUrl = "http://ardownload.adobe.com/pub/adobe/reader/win/AcrobatDC/" & $versionNr & "/AcroRdrDC" & $versionNr & "_sv_SE.exe"
+			$readerDownloadSucess = InetGet($readerUrl, @DesktopDir & "/KFS/reader.exe")
+			if $readerDownloadSucess <> 0 Then ExitLoop
+		Next
 
 ;~~~ Install Adobe Reader ~~~;
 		If FileExists(@DesktopDir & "/KFS/reader.exe") Then
