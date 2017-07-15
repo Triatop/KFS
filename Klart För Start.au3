@@ -131,6 +131,7 @@ Func _Create_Tree_Items()
 		EndIf
 	Next
 	FileClose($iniNinite)
+	ControlTreeView($wGUI, "", $hTV, "Expand", "Common")
 
 	; Set initial unchecked state and get item handles
 	For $i = 0 To UBound($aTVItems) - 1
@@ -163,7 +164,7 @@ Func _Check_Standard_Programs()
 		EndIf
 	Next
 	FileClose($iniNinite)
-EndFunc   ;==>_Get_Standard_Programs
+EndFunc   ;==>_Check_Standard_Programs
 
 Func _Apply_Changes()
 	_Install_Programs()
