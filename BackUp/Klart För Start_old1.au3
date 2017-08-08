@@ -48,7 +48,7 @@ $tvItems = GUICtrlCreateTreeView(8, 8, $wWidth * 0.33, $wHeight - 160, BitOR($GU
 $hTV = GUICtrlGetHandle(-1)
 _Create_Tree_Items()
 
-GUICtrlCreateTreeView(10 + ($wWidth * 0.33), 8, ($wWidth * 0.67) - 18, $wHeight - 160, BitOR($GUI_SS_DEFAULT_TREEVIEW, $TVS_CHECKBOXES), _
+GUICtrlCreateTreeView(10 + ($wWidth * 0.33), 8, ($wWidth * 0.67) - 18 , $wHeight - 160, BitOR($GUI_SS_DEFAULT_TREEVIEW, $TVS_CHECKBOXES), _
 		$WS_EX_DLGMODALFRAME + $WS_EX_CLIENTEDGE)
 
 If (DirCreate($dir)) Then
@@ -141,7 +141,7 @@ Func _Create_Tree_Items()
 		EndIf
 		If (IniRead($iniNinite, $i, "category", "")) = "standard" Then
 			$aTVItems[$i][2] = GUICtrlCreateTreeViewItem(IniRead($iniNinite, $i, "name", 0), $aTVItems[93][2])
-		ElseIf (IniRead($iniNinite, $i, "category", "")) = "g4g" Then
+		ElseIf(IniRead($iniNinite, $i, "category", "")) = "g4g" Then
 			$aTVItems[$i][2] = GUICtrlCreateTreeViewItem(IniRead($iniNinite, $i, "name", 0), $aTVItems[94][2])
 		Else
 			$aTVItems[$i][2] = GUICtrlCreateTreeViewItem(IniRead($iniNinite, $i, "name", 0), $aTVItems[95][2])
@@ -174,17 +174,17 @@ EndFunc   ;==>_Check_Parents
 
 Func _Check_Standard_Programs()
 	_Edit_Log("Checking standard checkboxes.")
-	;----- Load Standard values
+;----- Load Standard values
 	If (FileOpen($iniNinite)) Then
-		For $i = 0 To UBound($aTVItems) - 1 Step 1
-			If (IniRead($iniNinite, $i, "standard", 0) == 1) Then
-				_GUICtrlTreeView_SetChecked($hTV, $aTVItems[$i][0])
-			EndIf
-		Next
-		FileClose($iniNinite)
+	For $i = 0 To UBound($aTVItems) - 1 Step 1
+		If (IniRead($iniNinite, $i, "standard", 0) == 1) Then
+			_GUICtrlTreeView_SetChecked($hTV, $aTVItems[$i][0])
+		EndIf
+	Next
+	FileClose($iniNinite)
 	Else
-		MsgBox($MB_SYSTEMMODAL, "ERROR", "Can't open file: " & $iniNinite)
-	EndIf
+		MsgBox($MB_SYSTEMMODAL, "ERROR", "Can't open file: " &$iniNinite)
+		EndIf
 EndFunc   ;==>_Check_Standard_Programs
 
 Func _Apply_Changes()
@@ -209,7 +209,7 @@ Func _Install_Ninite()
 	Local $urlNinite = "https://ninite.com/"
 	For $i = 0 To UBound($aTVItems) - 4 Step 1
 		; --- 85 -> 92 --- ;
-		If ($i <> 89 Or $i <> 90) Then
+		If ($i <> 89 or $i <> 90) Then
 			If (_GUICtrlTreeView_GetChecked($hTV, $aTVItems[$i][0])) Then
 				$urlNinite &= "-" & IniRead($iniNinite, $i, "url", "")
 				If $install <> True Then
@@ -223,7 +223,7 @@ Func _Install_Ninite()
 		$urlNinite &= "/ninite.exe"
 		InetGet($urlNinite, $dir & "/Ninite.exe")
 
-		;----- Install Ninite
+;----- Install Ninite
 		_Edit_Log("Installing Ninite")
 		If Not Run($dir & "/ninite.exe") Then
 			WinWait("Ninite", "Finished.")
@@ -234,7 +234,7 @@ Func _Install_Ninite()
 EndFunc   ;==>_Install_Ninite
 
 Func _Install_Adobe_Reader()
-	;----- Download Adobe Reader
+;----- Download Adobe Reader
 	If _GUICtrlTreeView_GetChecked($hTV, $aTVItems[85][0]) Then
 		_Edit_Log("Downloading Adobe Reader Changelog")
 		;----- Get Adobe reader changelog
@@ -259,7 +259,7 @@ Func _Install_Adobe_Reader()
 			If $readerDownloadSucess <> 0 Then ExitLoop
 		Next
 
-		;----- Install Adobe Reader
+;----- Install Adobe Reader
 		_Edit_Log("Installing Adobe Reader")
 		If FileExists($dir & "/reader.exe") Then
 			Run($dir & "/reader.exe")
@@ -272,11 +272,11 @@ Func _Install_Adobe_Reader()
 EndFunc   ;==>_Install_Adobe_Reader
 
 Func _Install_BGP_Killer()
-	;----- Download BGP Killer
+;----- Download BGP Killer
 	If (_GUICtrlTreeView_GetChecked($hTV, $aTVItems[86][0])) Then
 		_Edit_Log("Downloading BGP Killer")
 		InetGet($BGPKillerUrl, $dir & "/BGP_Killer.exe")
-		;----- Install BGP Killer
+;----- Install BGP Killer
 		If FileExists($dir & "/BGP_Killer.exe") Then
 			_Edit_Log("Installing BGP Killer")
 			Run($dir & "/BGP_Killer.exe")
@@ -300,11 +300,11 @@ Func _Install_BGP_Killer()
 EndFunc   ;==>_Install_BGP_Killer
 
 Func _Install_Unchecky()
-	;----- Download Unchecky
+;----- Download Unchecky
 	If (_GUICtrlTreeView_GetChecked($hTV, $aTVItems[87][0])) Then
 		_Edit_Log("Downloading Unchecky")
 		InetGet($uncheckyUrl, $dir & "/unchecky.exe")
-		;----- Install Unchecky
+;----- Install Unchecky
 		If FileExists($dir & "/unchecky.exe") Then
 			_Edit_Log("Installing Unchecky")
 			Run($dir & "/unchecky.exe")
@@ -342,7 +342,7 @@ Func _Install_ESET()
 	EndIf
 
 	_Edit_Log("Installing ESET")
-	Run($dir & "/ESET.exe")
+	Run($dir &"/ESET.exe")
 EndFunc   ;==>_Install_ESET
 
 Func _Set_Settings()
