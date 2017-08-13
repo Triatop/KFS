@@ -1,8 +1,4 @@
 #RequireAdmin
-#Region ;**** Directives created by AutoIt3Wrapper_GUI ****
-#AutoIt3Wrapper_Icon=C:\Users\Hem\Desktop\Apathae-Wren-Applications.ico
-#AutoIt3Wrapper_Run_Tidy=y
-#EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 #cs ----------------------------------------------------------------------------
 
 	AutoIt Version: 3.3.14.2
@@ -17,38 +13,67 @@
 
 
 #include <GUIConstantsEx.au3>
+#include <WinAPI.au3>
 #include <WindowsConstants.au3>
 #include <GuiTreeView.au3>
 #include <Array.au3>
 #include <StaticConstants.au3>
+#include <EditConstants.au3>
 
-;----- Create variables
-Static Global $wWidth = 800, $wHeight = 600
+;----- VARIABLES -----;
+;----- Window -----;
+Global $wWidth = 800, $wHeight = 600
+Static Global $wWidth_min = 600, $wHeight_min = 400
+
+If (@DesktopHeight <= 1024) Then
+	$wWidth = $wWidth_min
+	$wHeight = $wHeight_min
+EndIf
+If (@DesktopWidth <= 1280) Then
+	$wWidth = $wWidth_min
+	$wHeight = $wHeight_min
+EndIf
+
 Static Global $wName = "Klart För Start"
+Global $wCaption = ""
+;----- Files -----;
 Static Global $dir = @TempDir & "\KFS"
 Static Global $log = $dir & "\Log.txt"
 Static Global $iniNinite = "Resources/Ninite.ini"
+;----- Hardcoded url -----;
 Static Global $BGPKillerUrl = "http://bgpkiller.weebly.com/uploads/4/1/2/2/41220059/bgpkiller_setup_v0.9.6.0.exe"
 Static Global $uncheckyUrl = "https://unchecky.com/files/unchecky_setup.exe"
-Global $wCaption = ""
-Global $aTVItems[96][3]
-Global $status = True
+;----- Lower Button variables -----;
+
+Global $lowerButton_1_X_Pos = 8
+Global $lowerButton_Y_Pos = $wHeight - 60
+Global $lowerButton_2_X_Pos = 98
+Global $lowerButton_3_X_Pos = $wWidth - 90
+
+Global $lowerButton_Width = 80
+;----- GUI Boxes -----;
+Global $topGUIBoxes_Height = $wHeight * 0.67
+;----- Log Box ------;
 Global $log_Output
+Global $logBox_X_Pos = $wHeight * 0.69
+Global $logBox_Height = $wHeight * 0.33 - 80
+;----- Create tree array  -----;
+Global $aTVItems[96][3]
 
-;----- Create GUI
-$wGUI = GUICreate($wName & $wCaption, $wWidth, $wHeight)
+;----- Create GUI -----;
+$wGUI = GUICreate($wName & $wCaption, $wWidth, $wHeight, -1, -1, BitOR($WS_CAPTION, $WS_THICKFRAME))
 
-;----- Create file menu
+;----- Create file menu -----;
 $Menu_1 = GUICtrlCreateMenu("File")
-$Menu_1_Child_1 = GUICtrlCreateMenuItem("1.", $Menu_1)
+$Menu_1_Child_1 = GUICtrlCreateMenuItem("1. ", $Menu_1)
 
-;----- Create tree
-$tvItems = GUICtrlCreateTreeView(8, 8, $wWidth * 0.33, $wHeight - 160, BitOR($GUI_SS_DEFAULT_TREEVIEW, $TVS_CHECKBOXES), _
+;----- Create tree -----;
+$tvItems = GUICtrlCreateTreeView(8, 8, $wWidth * 0.33, $topGUIBoxes_Height, BitOR($GUI_SS_DEFAULT_TREEVIEW, $TVS_CHECKBOXES), _
 		$WS_EX_DLGMODALFRAME + $WS_EX_CLIENTEDGE)
 $hTV = GUICtrlGetHandle(-1)
 _Create_Tree_Items()
 
-GUICtrlCreateTreeView(10 + ($wWidth * 0.33), 8, ($wWidth * 0.67) - 18, $wHeight - 160, BitOR($GUI_SS_DEFAULT_TREEVIEW, $TVS_CHECKBOXES), _
+GUICtrlCreateTreeView(10 + ($wWidth * 0.33), 8, ($wWidth * 0.67) - 18, $topGUIBoxes_Height, BitOR($GUI_SS_DEFAULT_TREEVIEW, $TVS_CHECKBOXES), _
 		$WS_EX_DLGMODALFRAME + $WS_EX_CLIENTEDGE)
 
 If (DirCreate($dir)) Then
@@ -57,10 +82,10 @@ Else
 	MsgBox($MB_SYSTEMMODAL, "ERROR", "Cannot create directory: " & $dir)
 EndIf
 
-;----- Create buttons to set/clear all
-$bCheckStandard = GUICtrlCreateButton("Check Standard", 8, $wHeight - 55, 90, 30)
-$hClear = GUICtrlCreateButton("Clear All", 98, $wHeight - 55, 80, 30)
-$hApply = GUICtrlCreateButton("Apply", $wWidth - 90, $wHeight - 55, 80, 30)
+;----- Create buttons to set/clear all -----;
+$bCheckStandard = GUICtrlCreateButton("Check Standard", $lowerButton_1_X_Pos, $lowerButton_Y_Pos, $lowerButton_Width + 10, 30)
+$hClear = GUICtrlCreateButton("Clear All", $lowerButton_2_X_Pos, $lowerButton_Y_Pos, $lowerButton_Width, 30)
+$hApply = GUICtrlCreateButton("Apply", $lowerButton_3_X_Pos, $lowerButton_Y_Pos, $lowerButton_Width, 30)
 
 _Check_Standard_Programs()
 
@@ -82,6 +107,7 @@ Func Main()
 				_Adjust_All(False)
 			Case $hApply
 				_Apply_Changes()
+			Case $Menu_1_Child_1
 		EndSwitch
 
 		;----- Get selected item
@@ -91,15 +117,15 @@ Func Main()
 			;----- If so check its parent
 			_Check_Parents($hSelected)
 		EndIf
-		Sleep(20)
+		Sleep(10)
 	WEnd
 	GUIDelete($wGUI)
 EndFunc   ;==>Main
 
 Func _Adjust_All($fState = True)
-	;----- Loop through items
+	;----- Loop through items -----;
 	For $n = 0 To UBound($aTVItems) - 1
-		;----- Adjust items
+		;----- Adjust items -----;
 		_GUICtrlTreeView_SetChecked($hTV, $aTVItems[$n][0], $fState)
 		$aTVItems[$n][1] = $fState
 	Next
@@ -109,22 +135,22 @@ Func _Adjust_Children($hPassedItem, $fState = True)
 
 	Local $iIndex
 
-	;----- Get the handle of the first child
+	;----- Get the handle of the first child -----;
 	Local $hChild = _GUICtrlTreeView_GetFirstChild($tvItems, $hPassedItem)
 	If $hChild = 0 Then Return
-	;----- Loop through children
+	;----- Loop through children -----;
 	While 1
-		;----- Adjust the array
+		;----- Adjust the array -----;
 		$iIndex = _ArraySearch($aTVItems, $hChild)
 		If @error Then Return
 		$aTVItems[$iIndex][1] = $fState
-		;----- Adjust the child
+		;----- Adjust the child -----;
 		_GUICtrlTreeView_SetChecked($tvItems, $hChild, $fState)
-		;----- And now do the same for the generation beow
+		;----- And now do the same for the generation beow -----;
 		_Adjust_Children($hChild, $fState)
-		;----- Now get next child
+		;----- Now get next child -----;
 		$hChild = _GUICtrlTreeView_GetNextChild($tvItems, $hChild)
-		;----- Exit the loop if no more found
+		;----- Exit the loop if no more found -----;
 		If $hChild = 0 Then ExitLoop
 	WEnd
 EndFunc   ;==>_Adjust_Children
@@ -341,8 +367,7 @@ Func _Install_ESET()
 		InetGet("http://download.eset.com/special/live-installer/eset_smart_security_premium_live_installer.exe", $dir & "\ESET.exe")
 	EndIf
 
-	_Edit_Log("Installing ESET")
-	Run($dir & "/ESET.exe")
+	If (Run($dir & "/ESET.exe")) Then _Edit_Log("Running ESET")
 EndFunc   ;==>_Install_ESET
 
 Func _Set_Settings()
@@ -376,7 +401,7 @@ Func _Create_Log()
 	If (FileOpen($log)) Then _Edit_Log("Log created.")
 	_Edit_Log("Script started.")
 
-	$log_Output = GUICtrlCreateEdit(FileRead($log), 8, $wHeight - 150, $wWidth - 16, 90)
+	$log_Output = GUICtrlCreateEdit(FileRead($log), 8, $logBox_X_Pos, $wWidth - 16, $logBox_Height)
 	GUICtrlSetBkColor(-1, 0xFFFFFF)
 EndFunc   ;==>_Create_Log
 
