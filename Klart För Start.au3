@@ -239,14 +239,12 @@ Func _Install_Ninite()
 
 	For $i = 0 To UBound($aTVItems) - 4 Step 1
 		; --- 85 -> 92 --- ;
-		If $i < 85 Then
-			If $i > 92 Then
-				If (_GUICtrlTreeView_GetChecked($hTV, $aTVItems[$i][0])) Then
-					$urlNinite &= "-" & IniRead($iniNinite, $i, "url", "")
-					If $install <> True Then
-						$install = True
-					EndIf
-				EndIf
+		If $i < 85 Or $i > 92 Then
+			 If (_GUICtrlTreeView_GetChecked($hTV, $aTVItems[$i][0])) Then
+				 $urlNinite &= "-" & IniRead($iniNinite, $i, "url", "")
+				 If $install <> True Then
+					 $install = True
+			   EndIf
 			EndIf
 		EndIf
 	Next
