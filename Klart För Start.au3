@@ -28,11 +28,11 @@ Static Global $wWidth_min = 600, $wHeight_min = 400
 If (@DesktopHeight <= 1024) Then
 	$wWidth = $wWidth_min
 	$wHeight = $wHeight_min
-EndIf
-If (@DesktopWidth <= 1280) Then
+ElseIf (@DesktopWidth <= 1280) Then
 	$wWidth = $wWidth_min
 	$wHeight = $wHeight_min
 EndIf
+
 
 Static Global $wName = "Klart För Start"
 Global $wCaption = ""
@@ -66,6 +66,8 @@ $wGUI = GUICreate($wName & $wCaption, $wWidth, $wHeight, -1, -1, BitOR($WS_CAPTI
 ;----- Create file menu -----;
 $Menu_1 = GUICtrlCreateMenu("File")
 $Menu_1_Child_1 = GUICtrlCreateMenuItem("1. ", $Menu_1)
+$Menu_2 = GUICtrlCreateMenu("Save")
+$Menu_2_Child_1 = GUICtrlCreateMenuItem("1. Save logfile to desktop", $Menu_2)
 
 ;----- Create tree -----;
 $tvItems = GUICtrlCreateTreeView(8, 8, $wWidth * 0.33, $topGUIBoxes_Height, BitOR($GUI_SS_DEFAULT_TREEVIEW, $TVS_CHECKBOXES), _
@@ -97,17 +99,18 @@ Func Main()
 	While 1
 		Switch GUIGetMsg()
 			Case $GUI_EVENT_CLOSE
-				_Edit_Log("Script closing, cleaning up.")
+				_Edit_Log("Script closing, cleaning up")
 				_Cleanup()
 				Exit
 			Case $bCheckStandard
 				_Check_Standard_Programs()
 			Case $hClear
-				_Edit_Log("Clearing all checkboxes.")
+				_Edit_Log("Clearing all checkboxes")
 				_Adjust_All(False)
 			Case $hApply
 				_Apply_Changes()
-			Case $Menu_1_Child_1
+			Case $Menu_2_Child_1
+				_Save_Log()
 		EndSwitch
 
 		;----- Get selected item
@@ -199,7 +202,7 @@ Func _Check_Parents($hHandle)
 EndFunc   ;==>_Check_Parents
 
 Func _Check_Standard_Programs()
-	_Edit_Log("Checking standard checkboxes.")
+	_Edit_Log("Checking standard checkboxes")
 	;----- Load Standard values
 	If (FileOpen($iniNinite)) Then
 		For $i = 0 To UBound($aTVItems) - 1 Step 1
@@ -214,13 +217,13 @@ Func _Check_Standard_Programs()
 EndFunc   ;==>_Check_Standard_Programs
 
 Func _Apply_Changes()
-	_Edit_Log("Applying changes.")
+	_Edit_Log("Applying changes")
 	_Install_Programs()
 	_Set_Settings()
 EndFunc   ;==>_Apply_Changes
 
 Func _Install_Programs()
-	_Edit_Log("Installing programs.")
+	_Edit_Log("Installing programs")
 	_Install_Adobe_Reader()
 	_Install_BGP_Killer()
 	_Install_Unchecky()
@@ -233,18 +236,22 @@ Func _Install_Ninite()
 	FileOpen($iniNinite)
 	Local $install = False
 	Local $urlNinite = "https://ninite.com/"
+
 	For $i = 0 To UBound($aTVItems) - 4 Step 1
 		; --- 85 -> 92 --- ;
-		If ($i <> 89 Or $i <> 90) Then
-			If (_GUICtrlTreeView_GetChecked($hTV, $aTVItems[$i][0])) Then
-				$urlNinite &= "-" & IniRead($iniNinite, $i, "url", "")
-				If $install <> True Then
-					$install = True
+		If $i < 85 Then
+			If $i > 92 Then
+				If (_GUICtrlTreeView_GetChecked($hTV, $aTVItems[$i][0])) Then
+					$urlNinite &= "-" & IniRead($iniNinite, $i, "url", "")
+					If $install <> True Then
+						$install = True
+					EndIf
 				EndIf
 			EndIf
 		EndIf
 	Next
-	If ($install = True) Then
+
+	If ($install == True) Then
 		_Edit_Log("Downloading Ninite")
 		$urlNinite &= "/ninite.exe"
 		InetGet($urlNinite, $dir & "/Ninite.exe")
@@ -334,10 +341,10 @@ Func _Install_Unchecky()
 		If FileExists($dir & "/unchecky.exe") Then
 			_Edit_Log("Installing Unchecky")
 			Run($dir & "/unchecky.exe")
-			WinWait("Unchecky v1.0.2 Installation", "Välkommen till installationen av Unchecky")
-			ControlClick("Unchecky v1.0.2 Installation", "", "[CLASS:Button; INSTANCE:2]")
-			WinWait("Unchecky v1.0.2 Installation", "Gratulerar!")
-			ControlClick("Unchecky v1.0.2 Installation", "", "[CLASS:Button; INSTANCE:2]")
+			WinWait("Unchecky", "Välkommen till installationen av Unchecky")
+			ControlClick("Unchecky", "", "[CLASS:Button; INSTANCE:2]")
+			WinWait("Unchecky", "Gratulerar!")
+			ControlClick("Unchecky", "", "[CLASS:Button; INSTANCE:2]")
 		EndIf
 	EndIf
 EndFunc   ;==>_Install_Unchecky
@@ -398,8 +405,10 @@ Func _Cleanup_Desktop()
 EndFunc   ;==>_Cleanup_Desktop
 
 Func _Create_Log()
-	If (FileOpen($log)) Then _Edit_Log("Log created.")
-	_Edit_Log("Script started.")
+	If (FileOpen($log)) Then _Edit_Log("Log created")
+	_Edit_Log("Screen height: " & @DesktopHeight)
+	_Edit_Log("Screen width: " & @DesktopWidth)
+	_Edit_Log("Script started")
 
 	$log_Output = GUICtrlCreateEdit(FileRead($log), 8, $logBox_X_Pos, $wWidth - 16, $logBox_Height)
 	GUICtrlSetBkColor(-1, 0xFFFFFF)
@@ -411,9 +420,15 @@ Func _Edit_Log($addToLog)
 EndFunc   ;==>_Edit_Log
 
 Func _Save_Log()
+	If (FileCopy($log, @DesktopDir)) Then
+		_Edit_Log("Saving logfile to desktop")
+	EndIf
 EndFunc   ;==>_Save_Log
 
 Func _Change_Log_Output()
 	GUICtrlSetData($log_Output, FileRead($log))
 EndFunc   ;==>_Change_Log_Output
+
+
+
 
