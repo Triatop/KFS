@@ -1,4 +1,14 @@
 #RequireAdmin
+#Region ;**** Directives created by AutoIt3Wrapper_GUI ****
+#AutoIt3Wrapper_Icon=if_toolbox_86483.ico
+#AutoIt3Wrapper_Res_Comment=Auto KFS
+#AutoIt3Wrapper_Res_Description=Install KFS
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.0
+#AutoIt3Wrapper_Res_LegalCopyright=Datoraffären i Karlskrona
+#AutoIt3Wrapper_Res_Language=1053
+#AutoIt3Wrapper_Run_Tidy=y
+#AutoIt3Wrapper_Res_Field=ProductName|Klart För Start
+#EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 #cs ----------------------------------------------------------------------------
 
 	AutoIt Version: 3.3.14.2
@@ -10,18 +20,21 @@
 #ce ----------------------------------------------------------------------------
 
 ; Script Start - Add your code below here
-
-
+#Region Includes
 #include <GUIConstantsEx.au3>
+#include <MsgBoxConstants.au3>
+#include <ProgressConstants.au3>
+#include <InetConstants.au3>
+#include <SendMessage.au3>
 #include <WinAPI.au3>
 #include <WindowsConstants.au3>
 #include <GuiTreeView.au3>
 #include <Array.au3>
 #include <StaticConstants.au3>
 #include <EditConstants.au3>
+#EndRegion Includes
 
-;----- VARIABLES -----;
-;----- Window -----;
+#Region Window size
 Global $wWidth = 800, $wHeight = 600
 Static Global $wWidth_min = 600, $wHeight_min = 400
 
@@ -32,8 +45,13 @@ ElseIf (@DesktopWidth <= 1280) Then
 	$wWidth = $wWidth_min
 	$wHeight = $wHeight_min
 EndIf
+#EndRegion Window size
 
 
+#Region Variables
+;----- VARIABLES -----;
+Global $currentGUI = ""
+Global $previousGui = ""
 Static Global $wName = "Klart För Start"
 Global $wCaption = ""
 ;----- Files -----;
@@ -49,6 +67,10 @@ Global $lowerButton_1_X_Pos = 8
 Global $lowerButton_Y_Pos = $wHeight - 60
 Global $lowerButton_2_X_Pos = 98
 Global $lowerButton_3_X_Pos = $wWidth - 90
+Global $loadingBar_Width = 200
+Global $loadingBar_Height = 20
+Global $loadingBar_Pos_X = ($wWidth / 2) - ($loadingBar_Width / 2)
+Global $loadingBar_Pos_Y = $lowerButton_Y_Pos
 
 Global $lowerButton_Width = 80
 ;----- GUI Boxes -----;
@@ -58,7 +80,9 @@ Global $log_Output
 Global $logBox_X_Pos = $wHeight * 0.69
 Global $logBox_Height = $wHeight * 0.33 - 80
 ;----- Create tree array  -----;
-Global $aTVItems[96][3]
+Global $aTVItems[97][5]
+;----- GUI option variables -----;
+#EndRegion Variables
 
 ;----- Create GUI -----;
 $wGUI = GUICreate($wName & $wCaption, $wWidth, $wHeight, -1, -1, BitOR($WS_CAPTION, $WS_THICKFRAME))
@@ -75,8 +99,8 @@ $tvItems = GUICtrlCreateTreeView(8, 8, $wWidth * 0.33, $topGUIBoxes_Height, BitO
 $hTV = GUICtrlGetHandle(-1)
 _Create_Tree_Items()
 
-GUICtrlCreateTreeView(10 + ($wWidth * 0.33), 8, ($wWidth * 0.67) - 18, $topGUIBoxes_Height, BitOR($GUI_SS_DEFAULT_TREEVIEW, $TVS_CHECKBOXES), _
-		$WS_EX_DLGMODALFRAME + $WS_EX_CLIENTEDGE)
+#include <SettingsGroup.au3>
+
 
 If (DirCreate($dir)) Then
 	_Create_Log()
@@ -97,7 +121,8 @@ Main()
 
 Func Main()
 	While 1
-		Switch GUIGetMsg()
+		$guiMsg = GUIGetMsg()
+		Switch $guiMsg
 			Case $GUI_EVENT_CLOSE
 				_Edit_Log("Script closing, cleaning up")
 				_Cleanup()
@@ -111,15 +136,25 @@ Func Main()
 				_Apply_Changes()
 			Case $Menu_2_Child_1
 				_Save_Log()
+			Case $aTVItems[93][2]
+				MsgBox($MB_OK, "OK", "OK")
+			Case $bEmptyActionbar
+				MsgBox($MB_OK, "OK", "OK")
 		EndSwitch
 
+		For $i = 0 To UBound($aTVItems, $UBOUND_ROWS) - 1
+			If $guiMsg = $aTVItems[$i][2] Then
+				_ShowOptions($aTVItems[$i][3], $aTVItems[$i][4])
+			EndIf
+		Next
+
 		;----- Get selected item
-		$hSelected = _GUICtrlTreeView_GetSelection($hTV)
+		;$hSelected = _GUICtrlTreeView_GetSelection($hTV)
 		;----- Is it checked?
-		If _GUICtrlTreeView_GetChecked($hTV, $hSelected) Then
-			;----- If so check its parent
-			_Check_Parents($hSelected)
-		EndIf
+		;If _GUICtrlTreeView_GetChecked($hTV, $hSelected) Then
+		;	;----- If so check its parent
+		;	_Check_Parents($hSelected)
+		;EndIf
 		Sleep(10)
 	WEnd
 	GUIDelete($wGUI)
@@ -164,10 +199,9 @@ Func _Create_Tree_Items()
 	$aTVItems[93][2] = GUICtrlCreateTreeViewItem("Common", $tvItems)
 	$aTVItems[94][2] = GUICtrlCreateTreeViewItem("G4G", $tvItems)
 	$aTVItems[95][2] = GUICtrlCreateTreeViewItem("Uncommon", $tvItems)
+	$aTVItems[96][2] = GUICtrlCreateTreeViewItem("Windows", $tvItems)
 
-	For $i = 0 To UBound($aTVItems) - 4 Step 1
-		If (IniRead($iniNinite, $i, "name", "0")) = "0" Then
-		EndIf
+	For $i = 0 To UBound($aTVItems) - 4
 		If (IniRead($iniNinite, $i, "category", "")) = "standard" Then
 			$aTVItems[$i][2] = GUICtrlCreateTreeViewItem(IniRead($iniNinite, $i, "name", 0), $aTVItems[93][2])
 		ElseIf (IniRead($iniNinite, $i, "category", "")) = "g4g" Then
@@ -181,8 +215,10 @@ Func _Create_Tree_Items()
 
 	;----- Set initial unchecked state and get item handles
 	For $i = 0 To UBound($aTVItems) - 1
-		$aTVItems[$i][1] = False
 		$aTVItems[$i][0] = GUICtrlGetHandle($aTVItems[$i][2])
+		$aTVItems[$i][1] = False
+		$aTVItems[$i][3] = Null
+		$aTVItems[$i][4] = Null
 	Next
 EndFunc   ;==>_Create_Tree_Items
 
@@ -224,10 +260,10 @@ EndFunc   ;==>_Apply_Changes
 
 Func _Install_Programs()
 	_Edit_Log("Installing programs")
+	_Install_Datoraffaren_Support()
 	_Install_Adobe_Reader()
 	_Install_BGP_Killer()
 	_Install_Unchecky()
-	_Install_Datoraffaren_Support()
 	_Install_Ninite()
 	_Install_ESET()
 EndFunc   ;==>_Install_Programs
@@ -239,12 +275,19 @@ Func _Install_Ninite()
 
 	For $i = 0 To UBound($aTVItems) - 4 Step 1
 		; --- 85 -> 92 --- ;
-		If $i < 85 Or $i > 92 Then
-			 If (_GUICtrlTreeView_GetChecked($hTV, $aTVItems[$i][0])) Then
-				 $urlNinite &= "-" & IniRead($iniNinite, $i, "url", "")
-				 If $install <> True Then
-					 $install = True
-			   EndIf
+		If $i < 85 Then
+			If (_GUICtrlTreeView_GetChecked($hTV, $aTVItems[$i][0])) Then
+				$urlNinite &= "-" & IniRead($iniNinite, $i, "url", "")
+				If $install <> True Then
+					$install = True
+				EndIf
+			EndIf
+		ElseIf $i > 92 Then
+			If (_GUICtrlTreeView_GetChecked($hTV, $aTVItems[$i][0])) Then
+				$urlNinite &= "-" & IniRead($iniNinite, $i, "url", "")
+				If $install <> True Then
+					$install = True
+				EndIf
 			EndIf
 		EndIf
 	Next
@@ -256,10 +299,13 @@ Func _Install_Ninite()
 
 		;----- Install Ninite
 		_Edit_Log("Installing Ninite")
-		If Not Run($dir & "/ninite.exe") Then
-			WinWait("Ninite", "Finished.")
-			ControlClick("Ninite", "", 2)
-		EndIf
+		Run($dir & "/ninite.exe")
+		Do
+			If (WinExists("Ninite", "Finished.")) Then
+				ControlClick("Ninite", "", 2)
+			EndIf
+			Sleep(100)
+		Until (Not ProcessExists("ninite.exe"))
 	EndIf
 	FileClose($iniNinite)
 EndFunc   ;==>_Install_Ninite
@@ -286,7 +332,7 @@ Func _Install_Adobe_Reader()
 		For $i = 0 To UBound($versionNrArray) Step 1
 			$versionNr = StringReplace($versionNrArray[$i], ".", "")
 			$readerUrl = "http://ardownload.adobe.com/pub/adobe/reader/win/AcrobatDC/" & $versionNr & "/AcroRdrDC" & $versionNr & "_sv_SE.exe"
-			$readerDownloadSucess = InetGet($readerUrl, $dir & "/reader.exe")
+			$readerDownloadSucess = InetGet($readerUrl, $dir & "/reader.exe", $INET_DOWNLOADBACKGROUND)
 			If $readerDownloadSucess <> 0 Then ExitLoop
 		Next
 
@@ -294,10 +340,14 @@ Func _Install_Adobe_Reader()
 		_Edit_Log("Installing Adobe Reader")
 		If FileExists($dir & "/reader.exe") Then
 			Run($dir & "/reader.exe")
-			WinWait("Adobe Acrobat Reader DC (Continuous) - inställning", "Klart att installera Adobe Acrobat Reader DC")
-			ControlClick("Adobe Acrobat Reader DC (Continuous) - inställning", "", "[CLASS:Button; INSTANCE:4]")
-			WinWait("Adobe Acrobat Reader DC (Continuous) - inställning", "Installationen är klar")
-			ControlClick("Adobe Acrobat Reader DC (Continuous) - inställning", "", "[CLASS:Button; INSTANCE:1]")
+			Do
+				If (WinExists("Adobe Acrobat Reader DC (Continuous)", "Klart att installera Adobe Acrobat Reader DC")) Then
+					ControlClick("Adobe Acrobat Reader DC (Continuous)", "", "[CLASS:Button; INSTANCE:4]")
+				ElseIf (WinExists("Adobe Acrobat Reader DC (Continuous)", "Installationen är klar")) Then
+					ControlClick("Adobe Acrobat Reader DC (Continuous)", "", "[CLASS:Button; INSTANCE:1]")
+				EndIf
+				Sleep(100)
+			Until (Not ProcessExists("reader.exe"))
 		EndIf
 	EndIf
 EndFunc   ;==>_Install_Adobe_Reader
@@ -311,21 +361,25 @@ Func _Install_BGP_Killer()
 		If FileExists($dir & "/BGP_Killer.exe") Then
 			_Edit_Log("Installing BGP Killer")
 			Run($dir & "/BGP_Killer.exe")
-			WinWait("Setup - BGPKiller", "Welcome to the BGPKiller Setup Wizard")
-			ControlClick("Setup - BGPKiller", "", "[CLASS:TNewButton; INSTANCE:1]")
-			WinWait("Setup - BGPKiller", "License Agreement")
-			ControlClick("Setup - BGPKiller", "", "[CLASSNN:TNewRadioButton1]")
-			ControlClick("Setup - BGPKiller", "", "[CLASS:TNewButton; INSTANCE:2]")
-			WinWait("Setup - BGPKiller", "Select Destination Location")
-			ControlClick("Setup - BGPKiller", "", "[CLASS:TNewButton; INSTANCE:3]")
-			WinWait("Setup - BGPKiller", "Select Start Menu Folder")
-			ControlClick("Setup - BGPKiller", "", "[CLASS:TNewButton; INSTANCE:4]")
-			WinWait("Setup - BGPKiller", "Select Additional Tasks")
-			ControlClick("Setup - BGPKiller", "", "[CLASS:TNewButton; INSTANCE:4]")
-			WinWait("Setup - BGPKiller", "Ready to Install")
-			ControlClick("Setup - BGPKiller", "", "[CLASS:TNewButton; INSTANCE:4]")
-			WinWait("Setup - BGPKiller", "&Finish")
-			ControlClick("Setup - BGPKiller", "", "[CLASS:TNewButton; INSTANCE:4]")
+			Do
+				If (WinExists("Setup - BGPKiller", "Welcome to the BGPKiller Setup Wizard")) Then
+					ControlClick("Setup - BGPKiller", "", "[CLASS:TNewButton; INSTANCE:1]")
+				ElseIf (WinExists("Setup - BGPKiller", "License Agreement")) Then
+					ControlClick("Setup - BGPKiller", "", "[CLASSNN:TNewRadioButton1]")
+					ControlClick("Setup - BGPKiller", "", "[CLASS:TNewButton; INSTANCE:2]")
+				ElseIf (WinExists("Setup - BGPKiller", "Select Destination Location")) Then
+					ControlClick("Setup - BGPKiller", "", "[CLASS:TNewButton; INSTANCE:3]")
+				ElseIf (WinExists("Setup - BGPKiller", "Select Start Menu Folder")) Then
+					ControlClick("Setup - BGPKiller", "", "[CLASS:TNewButton; INSTANCE:4]")
+				ElseIf (WinExists("Setup - BGPKiller", "Select Additional Tasks")) Then
+					ControlClick("Setup - BGPKiller", "", "[CLASS:TNewButton; INSTANCE:4]")
+				ElseIf (WinExists("Setup - BGPKiller", "Ready to Install")) Then
+					ControlClick("Setup - BGPKiller", "", "[CLASS:TNewButton; INSTANCE:4]")
+				ElseIf (WinExists("Setup - BGPKiller", "&Finish")) Then
+					ControlClick("Setup - BGPKiller", "", "[CLASS:TNewButton; INSTANCE:4]")
+				EndIf
+				Sleep(500)
+			Until (Not ProcessExists("BGP_Killer.exe"))
 		EndIf
 	EndIf
 EndFunc   ;==>_Install_BGP_Killer
@@ -339,10 +393,15 @@ Func _Install_Unchecky()
 		If FileExists($dir & "/unchecky.exe") Then
 			_Edit_Log("Installing Unchecky")
 			Run($dir & "/unchecky.exe")
-			WinWait("Unchecky", "Välkommen till installationen av Unchecky")
-			ControlClick("Unchecky", "", "[CLASS:Button; INSTANCE:2]")
-			WinWait("Unchecky", "Gratulerar!")
-			ControlClick("Unchecky", "", "[CLASS:Button; INSTANCE:2]")
+			Do
+				If (WinExists("Unchecky", "Installera")) Then
+					ControlClick("Unchecky", "", "[CLASS:Button; INSTANCE:2]")
+					WinWait("Unchecky", "Gratulerar!", 20000)
+				ElseIf (WinExists("Unchecky", "Gratulerar!")) Then
+					ControlClick("Unchecky", "", "[CLASS:Button; INSTANCE:2]")
+				EndIf
+				Sleep(500)
+			Until (Not ProcessExists("unchecky.exe"))
 		EndIf
 	EndIf
 EndFunc   ;==>_Install_Unchecky
@@ -428,5 +487,26 @@ Func _Change_Log_Output()
 EndFunc   ;==>_Change_Log_Output
 
 
+Func _ShowOptions($start, $end)
+	If $lastSelectedStart <> Null Then
+		For $i = $lastSelectedStart To $lastSelectedEnd
+			GUICtrlSetState($i, $GUI_HIDE)
+		Next
+	EndIf
+
+	If $start <> Null Then
+		For $i = $start To $end
+			GUICtrlSetState($i, $GUI_SHOW)
+		Next
+	EndIf
+
+	$lastSelectedStart = $start
+	$lastSelectedEnd = $end
+EndFunc   ;==>_ShowOptions
+
+
+Func _EmptyActionbar()
+	;RegWrite("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband", "Favorites", "REG_BINARY",)
+EndFunc   ;==>_EmptyActionbar
 
 
