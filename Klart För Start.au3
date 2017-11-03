@@ -138,8 +138,22 @@ Func Main()
 				_Save_Log()
 			Case $aTVItems[93][2]
 				MsgBox($MB_OK, "OK", "OK")
-			Case $bEmptyActionbar
-				MsgBox($MB_OK, "OK", "OK")
+			Case $bDisable_Printer_Manager
+				_disable_Printer_manager()
+			Case $bDisable_Sound
+				_disable_sound()
+			Case $bDisable_App_Notific
+				_disable_app_notific()
+			Case $bDisable_Recent_Used
+				_disable_recent_used_list()
+			Case $bDisable_Start_Suggest
+				_disable_start_suggestions()
+			Case $bDisable_Task_View_Icon
+				_disable_tast_view_icon()
+			Case $bDisable_Taskbar_Search
+				_disable_taskbar_search()
+			Case $bDisable_Taskbar_Favorites
+				_remove_taskbar_favorites()
 		EndSwitch
 
 		For $i = 0 To UBound($aTVItems, $UBOUND_ROWS) - 1
@@ -505,8 +519,34 @@ Func _ShowOptions($start, $end)
 EndFunc   ;==>_ShowOptions
 
 
-Func _EmptyActionbar()
-	;RegWrite("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband", "Favorites", "REG_BINARY",)
-EndFunc   ;==>_EmptyActionbar
+Func _disable_Printer_manager()
+	Run("REGEDIT /S reg_files/disable_default_printer_manager.reg")
+EndFunc   ;==>_disable_Printer_manager
 
+Func _disable_sound()
+	Run("REGEDIT /S reg_files/no_sound.reg")
+EndFunc   ;==>_disable_sound
 
+Func _disable_app_notific()
+	Run("REGEDIT /S reg_files/disable_app_notifications.reg")
+EndFunc   ;==>_disable_app_notific
+
+Func _disable_recent_used_list()
+	Run("REGEDIT /S reg_files/disable_recent_used_list.reg")
+EndFunc   ;==>_disable_recent_used_list
+
+Func _disable_start_suggestions()
+	Run("REGEDIT /S reg_files/disable_start_suggestions.reg")
+EndFunc   ;==>_disable_start_suggestions
+
+Func _disable_tast_view_icon()
+	Run("REGEDIT /S reg_files/disable_task_view_icon.reg")
+EndFunc   ;==>_disable_tast_view_icon
+
+Func _disable_taskbar_search()
+	Run("REGEDIT /S reg_files/disable_taskbar_search.reg")
+EndFunc   ;==>_disable_taskbar_search
+
+Func _remove_taskbar_favorites()
+	Run("REGEDIT /S reg_files/remove_taskbar_favorites.reg")
+EndFunc   ;==>_remove_taskbar_favorites
