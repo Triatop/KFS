@@ -50,8 +50,6 @@ EndIf
 
 #Region Variables
 ;----- VARIABLES -----;
-Global $currentGUI = ""
-Global $previousGui = ""
 Static Global $wName = "Klart För Start"
 Global $wCaption = ""
 ;----- Files -----;
@@ -67,10 +65,6 @@ Global $lowerButton_1_X_Pos = 8
 Global $lowerButton_Y_Pos = $wHeight - 60
 Global $lowerButton_2_X_Pos = 98
 Global $lowerButton_3_X_Pos = $wWidth - 90
-Global $loadingBar_Width = 200
-Global $loadingBar_Height = 20
-Global $loadingBar_Pos_X = ($wWidth / 2) - ($loadingBar_Width / 2)
-Global $loadingBar_Pos_Y = $lowerButton_Y_Pos
 
 Global $lowerButton_Width = 80
 ;----- GUI Boxes -----;
@@ -161,14 +155,6 @@ Func Main()
 				_ShowOptions($aTVItems[$i][3], $aTVItems[$i][4])
 			EndIf
 		Next
-
-		;----- Get selected item
-		;$hSelected = _GUICtrlTreeView_GetSelection($hTV)
-		;----- Is it checked?
-		;If _GUICtrlTreeView_GetChecked($hTV, $hSelected) Then
-		;	;----- If so check its parent
-		;	_Check_Parents($hSelected)
-		;EndIf
 		Sleep(10)
 	WEnd
 	GUIDelete($wGUI)
