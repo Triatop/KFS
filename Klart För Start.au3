@@ -3,11 +3,12 @@
 #AutoIt3Wrapper_Icon=if_toolbox_86483.ico
 #AutoIt3Wrapper_Res_Comment=Auto KFS
 #AutoIt3Wrapper_Res_Description=Install KFS
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.0
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.6
+#AutoIt3Wrapper_Res_Fileversion_AutoIncrement=p
 #AutoIt3Wrapper_Res_LegalCopyright=Datoraffären i Karlskrona
 #AutoIt3Wrapper_Res_Language=1053
-#AutoIt3Wrapper_Run_Tidy=y
 #AutoIt3Wrapper_Res_Field=ProductName|Klart För Start
+#AutoIt3Wrapper_Run_Tidy=y
 #EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
 #cs ----------------------------------------------------------------------------
 
@@ -22,16 +23,16 @@
 ; Script Start - Add your code below here
 #Region Includes
 #include <GUIConstantsEx.au3>
-#include <MsgBoxConstants.au3>
-#include <ProgressConstants.au3>
 #include <InetConstants.au3>
 #include <SendMessage.au3>
-#include <WinAPI.au3>
 #include <WindowsConstants.au3>
 #include <GuiTreeView.au3>
+#include <GUIConstants.au3>
+#include <GuiEdit.au3>
 #include <Array.au3>
-#include <StaticConstants.au3>
-#include <EditConstants.au3>
+#include <RegChanges.au3>
+#include <File.au3>
+#include <ScrollBarsConstants.au3>
 #EndRegion Includes
 
 #Region Window size
@@ -130,29 +131,37 @@ Func Main()
 				_Apply_Changes()
 			Case $Menu_2_Child_1
 				_Save_Log()
-			Case $aTVItems[93][2]
-				MsgBox($MB_OK, "OK", "OK")
 			Case $bDisable_Printer_Manager
-				_disable_Printer_manager()
+				_disable_printer_manager()
 			Case $bDisable_Sound
-				_disable_sound()
+				_disable_theme_sound()
 			Case $bDisable_App_Notific
-				_disable_app_notific()
+				_disable_app_notifications()
 			Case $bDisable_Recent_Used
 				_disable_recent_used_list()
 			Case $bDisable_Start_Suggest
-				_disable_start_suggestions()
+				_disable_start_suggestion()
 			Case $bDisable_Task_View_Icon
-				_disable_tast_view_icon()
+				_disable_taskview_icon()
 			Case $bDisable_Taskbar_Search
 				_disable_taskbar_search()
 			Case $bDisable_Taskbar_Favorites
-				_remove_taskbar_favorites()
+				_disable_taskbar_favorites()
+			Case $bDisable_Taskbar_Contacts
+				_disable_taskbar_contacts()
+			Case $bApplyTheme
+				ShellExecute("Resources\Themes\" & GUICtrlRead($cbTheme))
+				_disable_theme_sound()
 		EndSwitch
 
 		For $i = 0 To UBound($aTVItems, $UBOUND_ROWS) - 1
 			If $guiMsg = $aTVItems[$i][2] Then
 				_ShowOptions($aTVItems[$i][3], $aTVItems[$i][4])
+				If Not _GUICtrlTreeView_GetChecked($hTV, $aTVItems[$i][0]) Then
+					_Adjust_Children($aTVItems[$i][0], False)
+				ElseIf _GUICtrlTreeView_GetChecked($hTV, $aTVItems[$i][0]) Then
+					_Adjust_Children($aTVItems[$i][0], True)
+				EndIf
 			EndIf
 		Next
 		Sleep(10)
@@ -201,7 +210,7 @@ Func _Create_Tree_Items()
 	$aTVItems[95][2] = GUICtrlCreateTreeViewItem("Uncommon", $tvItems)
 	$aTVItems[96][2] = GUICtrlCreateTreeViewItem("Windows", $tvItems)
 
-	For $i = 0 To UBound($aTVItems) - 4
+	For $i = 0 To UBound($aTVItems) - 5
 		If (IniRead($iniNinite, $i, "category", "")) = "standard" Then
 			$aTVItems[$i][2] = GUICtrlCreateTreeViewItem(IniRead($iniNinite, $i, "name", 0), $aTVItems[93][2])
 		ElseIf (IniRead($iniNinite, $i, "category", "")) = "g4g" Then
@@ -238,18 +247,9 @@ Func _Check_Parents($hHandle)
 EndFunc   ;==>_Check_Parents
 
 Func _Check_Standard_Programs()
-	_Edit_Log("Checking standard checkboxes")
-	;----- Load Standard values
-	If (FileOpen($iniNinite)) Then
-		For $i = 0 To UBound($aTVItems) - 1 Step 1
-			If (IniRead($iniNinite, $i, "standard", 0) == 1) Then
-				_GUICtrlTreeView_SetChecked($hTV, $aTVItems[$i][0])
-			EndIf
-		Next
-		FileClose($iniNinite)
-	Else
-		MsgBox($MB_SYSTEMMODAL, "ERROR", "Can't open file: " & $iniNinite)
-	EndIf
+	_Edit_Log("Checking common checkboxes")
+	_GUICtrlTreeView_SetChecked($hTV, $aTVItems[93][0])
+	_Adjust_Children($aTVItems[93][0], True)
 EndFunc   ;==>_Check_Standard_Programs
 
 Func _Apply_Changes()
@@ -415,19 +415,19 @@ EndFunc   ;==>_Install_Datoraffaren_Support
 
 Func _Install_ESET()
 	If _GUICtrlTreeView_GetChecked($hTV, $aTVItems[89][0]) Then
-		_Edit_Log("Donwloading ESET")
+		_Edit_Log("Downloading ESET")
 		InetGet("http://download.eset.com/special/live-installer/eset_nod32_antivirus_live_installer.exe", $dir & "\ESET.exe")
 	EndIf
 	If _GUICtrlTreeView_GetChecked($hTV, $aTVItems[90][0]) Then
-		_Edit_Log("Donwloading ESET")
+		_Edit_Log("Downloading ESET")
 		InetGet("http://download.eset.com/special/live-installer/eset_internet_security_live_installer.exe", $dir & "\ESET.exe")
 	EndIf
 	If _GUICtrlTreeView_GetChecked($hTV, $aTVItems[91][0]) Then
-		_Edit_Log("Donwloading ESET")
+		_Edit_Log("Downloading ESET")
 		InetGet("http://download.eset.com/special/live-installer/eset_smart_security_live_installer.exe", $dir & "\ESET.exe")
 	EndIf
 	If _GUICtrlTreeView_GetChecked($hTV, $aTVItems[92][0]) Then
-		_Edit_Log("Donwloading ESET")
+		_Edit_Log("Downloading ESET")
 		InetGet("http://download.eset.com/special/live-installer/eset_smart_security_premium_live_installer.exe", $dir & "\ESET.exe")
 	EndIf
 
@@ -484,6 +484,7 @@ EndFunc   ;==>_Save_Log
 
 Func _Change_Log_Output()
 	GUICtrlSetData($log_Output, FileRead($log))
+	_GUICtrlEdit_Scroll($log_Output, $SB_SCROLLCARET)
 EndFunc   ;==>_Change_Log_Output
 
 
@@ -503,36 +504,3 @@ Func _ShowOptions($start, $end)
 	$lastSelectedStart = $start
 	$lastSelectedEnd = $end
 EndFunc   ;==>_ShowOptions
-
-
-Func _disable_Printer_manager()
-	Run("REGEDIT /S reg_files/disable_default_printer_manager.reg")
-EndFunc   ;==>_disable_Printer_manager
-
-Func _disable_sound()
-	Run("REGEDIT /S reg_files/no_sound.reg")
-EndFunc   ;==>_disable_sound
-
-Func _disable_app_notific()
-	Run("REGEDIT /S reg_files/disable_app_notifications.reg")
-EndFunc   ;==>_disable_app_notific
-
-Func _disable_recent_used_list()
-	Run("REGEDIT /S reg_files/disable_recent_used_list.reg")
-EndFunc   ;==>_disable_recent_used_list
-
-Func _disable_start_suggestions()
-	Run("REGEDIT /S reg_files/disable_start_suggestions.reg")
-EndFunc   ;==>_disable_start_suggestions
-
-Func _disable_tast_view_icon()
-	Run("REGEDIT /S reg_files/disable_task_view_icon.reg")
-EndFunc   ;==>_disable_tast_view_icon
-
-Func _disable_taskbar_search()
-	Run("REGEDIT /S reg_files/disable_taskbar_search.reg")
-EndFunc   ;==>_disable_taskbar_search
-
-Func _remove_taskbar_favorites()
-	Run("REGEDIT /S reg_files/remove_taskbar_favorites.reg")
-EndFunc   ;==>_remove_taskbar_favorites
