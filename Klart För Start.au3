@@ -1,9 +1,10 @@
 #RequireAdmin
 #Region ;**** Directives created by AutoIt3Wrapper_GUI ****
 #AutoIt3Wrapper_Icon=if_toolbox_86483.ico
+#AutoIt3Wrapper_UseX64=n
 #AutoIt3Wrapper_Res_Comment=Auto KFS
 #AutoIt3Wrapper_Res_Description=Install KFS
-#AutoIt3Wrapper_Res_Fileversion=0.1.0.6
+#AutoIt3Wrapper_Res_Fileversion=0.1.0.7
 #AutoIt3Wrapper_Res_Fileversion_AutoIncrement=p
 #AutoIt3Wrapper_Res_LegalCopyright=Datoraffären i Karlskrona
 #AutoIt3Wrapper_Res_Language=1053
@@ -33,6 +34,7 @@
 #include <RegChanges.au3>
 #include <File.au3>
 #include <ScrollBarsConstants.au3>
+#include <StringConstants.au3>
 #EndRegion Includes
 
 #Region Window size
