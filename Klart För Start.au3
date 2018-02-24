@@ -35,6 +35,7 @@
 #include <File.au3>
 #include <ScrollBarsConstants.au3>
 #include <StringConstants.au3>
+
 #EndRegion Includes
 
 #Region Window size
@@ -65,9 +66,9 @@ Static Global $uncheckyUrl = "https://unchecky.com/files/unchecky_setup.exe"
 ;----- Lower Button variables -----;
 
 Global $lowerButton_1_X_Pos = 8
-Global $lowerButton_Y_Pos = $wHeight - 60
 Global $lowerButton_2_X_Pos = 98
 Global $lowerButton_3_X_Pos = $wWidth - 90
+Global $lowerButton_Y_Pos = $wHeight - 60
 
 Global $lowerButton_Width = 80
 ;----- GUI Boxes -----;
@@ -97,7 +98,6 @@ $hTV = GUICtrlGetHandle(-1)
 _Create_Tree_Items()
 
 #include <SettingsGroup.au3>
-
 
 If (DirCreate($dir)) Then
 	_Create_Log()
@@ -153,19 +153,44 @@ Func Main()
 				_disable_taskbar_contacts()
 			Case $bApplyTheme
 				ShellExecute("Resources\Themes\" & GUICtrlRead($cbTheme))
-				_disable_theme_sound()
+			Case $aTVItems[0][2]
+				_Only_One_AV($guiMsg)
+			Case $aTVItems[7][2]
+				_Only_One_AV($guiMsg)
+			Case $aTVItems[8][2]
+				_Only_One_AV($guiMsg)
+			Case $aTVItems[89][2]
+				_Only_One_AV($guiMsg)
+			Case $aTVItems[90][2]
+				_Only_One_AV($guiMsg)
+			Case $aTVItems[91][2]
+				_Only_One_AV($guiMsg)
+			Case $aTVItems[92][2]
+				_Only_One_AV($guiMsg)
+
 		EndSwitch
 
 		For $i = 0 To UBound($aTVItems, $UBOUND_ROWS) - 1
 			If $guiMsg = $aTVItems[$i][2] Then
 				_ShowOptions($aTVItems[$i][3], $aTVItems[$i][4])
-				If Not _GUICtrlTreeView_GetChecked($hTV, $aTVItems[$i][0]) Then
+				If (Not _GUICtrlTreeView_GetChecked($hTV, $aTVItems[$i][0])) Then
 					_Adjust_Children($aTVItems[$i][0], False)
-				ElseIf _GUICtrlTreeView_GetChecked($hTV, $aTVItems[$i][0]) Then
+				ElseIf (_GUICtrlTreeView_GetChecked($hTV, $aTVItems[$i][0])) Then
 					_Adjust_Children($aTVItems[$i][0], True)
 				EndIf
 			EndIf
 		Next
+
+;~ 		If ($guiMsg = $aTVItems[0][2]) Then
+;~ 			_GUICtrlTreeView_SetChecked($hTV, $aTVItems[7][0], False)
+;~ 			_GUICtrlTreeView_SetChecked($hTV, $aTVItems[8][0], False)
+;~ 			_GUICtrlTreeView_SetChecked($hTV, $aTVItems[89][0], False)
+;~ 			_GUICtrlTreeView_SetChecked($hTV, $aTVItems[90][0], False)
+;~ 			_GUICtrlTreeView_SetChecked($hTV, $aTVItems[91][0], False)
+;~ 			_GUICtrlTreeView_SetChecked($hTV, $aTVItems[92][0], False)
+;~ 			; 0, 7, 8, 89, 90, 91, 92
+;~ 		EndIf
+
 		Sleep(10)
 	WEnd
 	GUIDelete($wGUI)
@@ -181,7 +206,6 @@ Func _Adjust_All($fState = True)
 EndFunc   ;==>_Adjust_All
 
 Func _Adjust_Children($hPassedItem, $fState = True)
-
 	Local $iIndex
 
 	;----- Get the handle of the first child -----;
@@ -268,6 +292,8 @@ Func _Install_Programs()
 	_Install_Unchecky()
 	_Install_Ninite()
 	_Install_ESET()
+	_Edit_Log("")
+	_Edit_Log("DONE! Programs installed")
 EndFunc   ;==>_Install_Programs
 
 Func _Install_Ninite()
@@ -506,3 +532,31 @@ Func _ShowOptions($start, $end)
 	$lastSelectedStart = $start
 	$lastSelectedEnd = $end
 EndFunc   ;==>_ShowOptions
+
+Func _Only_One_AV($input)
+	If ($input <> $aTVItems[0][2]) Then
+		_GUICtrlTreeView_SetChecked($hTV, $aTVItems[0][0], False)
+		_GUICtrlTreeView_SetChecked($hTV, $aTVItems[86][0], False)
+	EndIf
+	If ($input <> $aTVItems[7][2]) Then
+		_GUICtrlTreeView_SetChecked($hTV, $aTVItems[7][0], False)
+	EndIf
+	If ($input <> $aTVItems[8][2]) Then
+		_GUICtrlTreeView_SetChecked($hTV, $aTVItems[8][0], False)
+	EndIf
+	If ($input <> $aTVItems[89][2]) Then
+		_GUICtrlTreeView_SetChecked($hTV, $aTVItems[89][0], False)
+	EndIf
+	If ($input <> $aTVItems[90][2]) Then
+		_GUICtrlTreeView_SetChecked($hTV, $aTVItems[90][0], False)
+	EndIf
+	If ($input <> $aTVItems[91][2]) Then
+		_GUICtrlTreeView_SetChecked($hTV, $aTVItems[91][0], False)
+	EndIf
+	If ($input <> $aTVItems[92][2]) Then
+		_GUICtrlTreeView_SetChecked($hTV, $aTVItems[92][0], False)
+	EndIf
+EndFunc   ;==>_Only_One_AV
+
+
+
